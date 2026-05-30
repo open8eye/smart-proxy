@@ -45,8 +45,10 @@ cd "$SCRIPT_DIR"
 zip -r "$OUTPUT_FILE" \
     . \
     -x "./build.sh" \
+    -x "./build-firefox.sh" \
     -x "./.gitignore" \
     -x "./README.md" \
+    -x "./manifest.firefox.json" \
     -x "./package.json" \
     -x "./package-lock.json" \
     -x "./babel.config.js" \

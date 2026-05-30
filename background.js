@@ -1,7 +1,11 @@
 // ============================================================
-// background.js — 扩展后台脚本（Service Worker）
+// background.js — 扩展后台脚本（Service Worker / Background Page）
 // 职责：代理控制、标签页监听、图标动画、消息通信、流量统计
 // ============================================================
+
+// --- 浏览器检测 ---
+var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined';
+var firefoxProxyInfo = null;
 
 // --- 图标动画状态 ---
 var iconAnimationTimer = null;  // 动画定时器
@@ -168,6 +172,23 @@ function clearTrafficStats() {
   chrome.storage.local.remove('trafficStats');
 }
 
+// 设置 Firefox 代理请求监听器
+function setupFirefoxProxy() {
+  if (!IS_FIREFOX) return;
+  browser.proxy.onRequest.addListener(
+    function(requestInfo) {
+      if (firefoxProxyInfo) {
+        return firefoxProxyInfo;
+      }
+      return { type: 'direct' };
+    },
+    { urls: ['<all_urls>'] }
+  );
+  browser.proxy.onError.addListener(function(error) {
+    console.error('[代理错误]', error.message);
+  });
+}
+
 // 初始化扩展：为所有存储项设置默认值（仅在不存在时）
 function initializeExtension() {
   chrome.storage.local.get(['proxies', 'activeProxyId', 'tabProxies', 'favorites', 'options', 'proxyMode', 'smartDomains'], function(result) {
@@ -206,6 +227,9 @@ function initializeExtension() {
   // 初始化流量统计
   loadTrafficStats();
   setupTrafficMonitoring();
+
+  // 初始化 Firefox 代理监听
+  setupFirefoxProxy();
 }
 
 // 恢复代理设置：浏览器启动时自动应用上次使用的代理
@@ -228,7 +252,7 @@ function restoreProxySettings() {
 // 代理核心功能
 // ============================================================
 
-// 生成 fixed_servers 模式的代理配置对象
+// 生成 fixed_servers 模式的代理配置对象（Chrome 专用）
 function getProxyConfig(proxy) {
   return {
     mode: 'fixed_servers',
@@ -243,20 +267,45 @@ function getProxyConfig(proxy) {
   };
 }
 
-// 应用代理：将代理设置写入 Chrome 代理 API，并启动图标动画
-function applyProxy(proxy) {
-  var config = getProxyConfig(proxy);
-  chrome.proxy.settings.set({ value: config, scope: 'regular' }, function() {
-    if (chrome.runtime.lastError) {
-      console.error('代理错误:', chrome.runtime.lastError);
+// 设置代理配置（内部函数，处理 Chrome/Firefox 差异）
+function setProxyConfig(proxy) {
+  if (IS_FIREFOX) {
+    firefoxProxyInfo = {
+      type: proxy.type,
+      host: proxy.host,
+      port: parseInt(proxy.port)
+    };
+    if (proxy.type === 'socks5' || proxy.type === 'socks4') {
+      firefoxProxyInfo.proxyDNS = true;
     }
-  });
+  } else {
+    var config = getProxyConfig(proxy);
+    chrome.proxy.settings.set({ value: config, scope: 'regular' }, function() {
+      if (chrome.runtime.lastError) {
+        console.error('代理错误:', chrome.runtime.lastError);
+      }
+    });
+  }
+}
+
+// 切换为直连模式（内部函数）
+function setDirectConnection() {
+  if (IS_FIREFOX) {
+    firefoxProxyInfo = null;
+  } else {
+    chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' }, function() {});
+  }
+}
+
+// 应用代理：将代理设置写入代理 API，并启动图标动画
+function applyProxy(proxy) {
+  setProxyConfig(proxy);
   startIconAnimation('on');
 }
 
 // 禁用代理：切换为直连模式，清除活跃代理 ID
 function disableProxy() {
-  chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' }, function() {});
+  setDirectConnection();
   chrome.storage.local.set({ activeProxyId: null });
   startIconAnimation('off');
 }
@@ -265,9 +314,29 @@ function disableProxy() {
 // 图标动画系统
 // ============================================================
 
+// 创建 Canvas（兼容 Chrome OffscreenCanvas 和 Firefox DOM Canvas）
+function createCanvas(width, height) {
+  if (typeof OffscreenCanvas !== 'undefined') {
+    return new OffscreenCanvas(width, height);
+  }
+  var canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+}
+
+// 设置扩展图标（兼容 Chrome action 和 Firefox browserAction）
+function setExtensionIcon(details) {
+  if (IS_FIREFOX) {
+    browser.browserAction.setIcon(details);
+  } else {
+    chrome.action.setIcon(details);
+  }
+}
+
 // 生成单帧图标：在基础图标上绘制状态环（绿色=已连接，红色=断开，黄色=待机）
 function generateIconFrame(size, status, frame) {
-  var canvas = new OffscreenCanvas(size, size);
+  var canvas = createCanvas(size, size);
   var ctx = canvas.getContext('2d');
 
   return createImageBitmap(self.iconImageData || new ImageData(size, size)).then(function(img) {
@@ -335,7 +404,7 @@ function loadBaseIcon() {
     .then(function(blob) { return createImageBitmap(blob); })
     .then(function(bitmap) {
       var size = 32;
-      var canvas = new OffscreenCanvas(size, size);
+      var canvas = createCanvas(size, size);
       var ctx = canvas.getContext('2d');
       ctx.drawImage(bitmap, 0, 0, size, size);
       self.iconImageData = ctx.getImageData(0, 0, size, size);
@@ -349,12 +418,12 @@ function updateIconFrame(status) {
     loadBaseIcon().then(function() {
       return generateIconFrame(size, status, iconFrameIndex);
     }).then(function(imageData) {
-      chrome.action.setIcon({ imageData: { 32: imageData } });
+      setExtensionIcon({ imageData: { 32: imageData } });
     });
     return;
   }
   generateIconFrame(size, status, iconFrameIndex).then(function(imageData) {
-    chrome.action.setIcon({ imageData: { 32: imageData } });
+    setExtensionIcon({ imageData: { 32: imageData } });
   });
 }
 
@@ -784,16 +853,15 @@ function checkAllTabs() {
             var proxy = proxies.find(function(p) { return p.id === tabProxies[tabId]; });
             if (proxy) {
               console.log('[定时检测] 活动标签页有代理，应用代理: ' + proxy.name);
-              chrome.proxy.settings.set({ value: getProxyConfig(proxy), scope: 'regular' }, function() {
-                chrome.storage.local.set({ activeProxyId: tabProxies[tabId] });
-                startIconAnimation('on');
-                
-                // pending状态下重定向到代理
-                if (tab.status === 'loading' && pendingUrl) {
-                  console.log('[定时检测] 已有代理的标签页pending中，重定向到代理: ' + pendingUrl);
-                  chrome.tabs.update(tabId, { url: pendingUrl });
-                }
-              });
+              setProxyConfig(proxy);
+              chrome.storage.local.set({ activeProxyId: tabProxies[tabId] });
+              startIconAnimation('on');
+
+              // pending状态下重定向到代理
+              if (tab.status === 'loading' && pendingUrl) {
+                console.log('[定时检测] 已有代理的标签页pending中，重定向到代理: ' + pendingUrl);
+                chrome.tabs.update(tabId, { url: pendingUrl });
+              }
             }
           }
           continue;
@@ -834,20 +902,19 @@ function checkAllTabs() {
           // 如果是当前活动标签页，立即应用代理
           if (tab.active) {
             hasActiveProxy = true;
-            chrome.proxy.settings.set({ value: getProxyConfig(proxy), scope: 'regular' }, function() {
-              chrome.storage.local.set({ activeProxyId: proxyId, tabProxies: tabProxies });
-              startIconAnimation('on');
-              
-              if (tab.status === 'loading' && pendingUrl) {
-                // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求
-                console.log('[定时检测] 页面pending中，重定向到代理: ' + pendingUrl);
-                chrome.tabs.update(tabId, { url: pendingUrl });
-              } else if (tab.status === 'complete') {
-                // 页面加载完成，reload让代理生效
-                console.log('[定时检测] 页面加载完成，重新加载让代理生效');
-                chrome.tabs.reload(tabId);
-              }
-            });
+            setProxyConfig(proxy);
+            chrome.storage.local.set({ activeProxyId: proxyId, tabProxies: tabProxies });
+            startIconAnimation('on');
+
+            if (tab.status === 'loading' && pendingUrl) {
+              // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求
+              console.log('[定时检测] 页面pending中，重定向到代理: ' + pendingUrl);
+              chrome.tabs.update(tabId, { url: pendingUrl });
+            } else if (tab.status === 'complete') {
+              // 页面加载完成，reload让代理生效
+              console.log('[定时检测] 页面加载完成，重新加载让代理生效');
+              chrome.tabs.reload(tabId);
+            }
           } else {
             // 非活动标签页，只记录设置，不立即应用
             chrome.storage.local.set({ tabProxies: tabProxies });
@@ -860,7 +927,7 @@ function checkAllTabs() {
       // 如果当前活动标签页没有代理，设置为直连模式
       if (!hasActiveProxy) {
         console.log('[定时检测] 活动标签页无代理，设置直连模式');
-        chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' }, function() {});
+        setDirectConnection();
         startIconAnimation('off');
       } else {
         console.log('[定时检测] 活动标签页有代理，保持代理状态');
@@ -898,6 +965,8 @@ if (typeof module !== 'undefined' && module.exports) {
     restoreProxySettings: restoreProxySettings,
     applyProxy: applyProxy,
     disableProxy: disableProxy,
+    setProxyConfig: setProxyConfig,
+    setDirectConnection: setDirectConnection,
     startIconAnimation: startIconAnimation,
     stopIconAnimation: stopIconAnimation,
     generateIconFrame: generateIconFrame,
@@ -907,6 +976,7 @@ if (typeof module !== 'undefined' && module.exports) {
     DEFAULT_SMART_DOMAINS: DEFAULT_SMART_DOMAINS,
     checkAllTabs: checkAllTabs,
     startPendingCheck: startPendingCheck,
-    stopPendingCheck: stopPendingCheck
+    stopPendingCheck: stopPendingCheck,
+    IS_FIREFOX: IS_FIREFOX
   };
 }

@@ -3,6 +3,17 @@
 // 职责：代理管理、收藏管理、智能域名管理、设置保存/导入导出
 // ============================================================
 
+var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined';
+
+// 禁用代理（兼容 Chrome 和 Firefox）
+function disableProxySettings(callback) {
+  if (IS_FIREFOX) {
+    chrome.runtime.sendMessage({ action: 'disableProxy' }, callback);
+  } else {
+    chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' }, callback);
+  }
+}
+
 // 获取浏览器默认语言
 function getDefaultLanguage() {
   var available = ['zh_CN', 'zh_TW', 'en', 'ja', 'ko', 'fr', 'de', 'es'];
@@ -258,7 +269,7 @@ function resetOptions() {
   if (!confirm(getMessage('confirmReset'))) return;
 
   chrome.storage.local.clear(function() {
-    chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' }, function() {
+    disableProxySettings(function() {
       document.getElementById('startup-restore').checked = false;
       document.getElementById('quick-switch').checked = false;
       document.getElementById('bypass-list').value = '';
@@ -410,7 +421,7 @@ function deleteProxy(id) {
     // 如果删除的是当前活跃代理，清除代理设置
     if (result.activeProxyId === id) {
       updates.activeProxyId = null;
-      chrome.proxy.settings.set({ value: { mode: 'direct' }, scope: 'regular' });
+      disableProxySettings();
     }
 
     chrome.storage.local.set(updates, function() {

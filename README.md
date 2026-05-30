@@ -23,11 +23,20 @@
 
 ## 安装方法
 
+### Chrome
+
 1. 下载或克隆本项目
 2. 打开Chrome浏览器，进入扩展管理页面：`chrome://extensions/`
 3. 开启"开发者模式"
 4. 点击"加载已解压的扩展程序"
 5. 选择本项目的 `smart-proxy` 目录
+
+### Firefox
+
+1. 下载或克隆本项目
+2. 打开Firefox浏览器，进入 `about:debugging#/runtime/this-firefox`
+3. 点击"临时载入附加组件"
+4. 选择 `smart-proxy/manifest.firefox.json` 文件
 
 ## 使用说明
 
