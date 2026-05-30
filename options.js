@@ -161,6 +161,45 @@ function bindEvents() {
     });
   });
   */
+
+  // Tabs 切换
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      // 切换按钮状态
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      // 切换内容显示
+      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+      document.getElementById('tab-' + tabId).classList.add('active');
+      // 如果切换到统计页面，加载统计数据
+      if (tabId === 'statistics') {
+        loadStatistics();
+      }
+    });
+  });
+
+  // 统计页面事件
+  document.querySelectorAll('.stats-filter .btn-sm').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.stats-filter .btn-sm').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      loadStatistics(this.getAttribute('data-period'));
+    });
+  });
+
+  document.getElementById('refresh-stats-btn').addEventListener('click', function() {
+    loadStatistics();
+  });
+
+  document.getElementById('clear-stats-btn').addEventListener('click', function() {
+    if (confirm(getMessage('confirmClearStats') || '确定要清除所有统计数据吗？')) {
+      chrome.runtime.sendMessage({ action: 'clearTrafficStats' }, function() {
+        loadStatistics();
+        showStatus(getMessage('statsCleared') || '统计数据已清除', 'success');
+      });
+    }
+  });
 }
 
 // ============================================================
@@ -681,4 +720,98 @@ function escapeHtml(str) {
   var div = document.createElement('div');
   div.appendChild(document.createTextNode(str));
   return div.innerHTML;
+}
+
+// ============================================================
+// 流量统计功能
+// ============================================================
+
+// 格式化文件大小
+function formatSize(bytes) {
+  if (bytes === 0) return '0 B';
+  var k = 1024;
+  var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  var i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// 格式化速度
+function formatSpeed(bytesPerSecond) {
+  return formatSize(bytesPerSecond) + '/s';
+}
+
+// 格式化时间
+function formatTime(ms) {
+  if (ms < 1000) return ms + 'ms';
+  if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
+  if (ms < 3600000) return (ms / 60000).toFixed(1) + 'min';
+  return (ms / 3600000).toFixed(1) + 'h';
+}
+
+// 加载统计数据
+function loadStatistics(period) {
+  period = period || 'day';
+  chrome.storage.local.get(['trafficStats'], function(result) {
+    var stats = result.trafficStats || {};
+    var now = Date.now();
+    var cutoff = 0;
+
+    // 根据时间段筛选
+    switch (period) {
+      case 'day':
+        cutoff = now - 24 * 60 * 60 * 1000;
+        break;
+      case 'week':
+        cutoff = now - 7 * 24 * 60 * 60 * 1000;
+        break;
+      case 'month':
+        cutoff = now - 30 * 24 * 60 * 60 * 1000;
+        break;
+      case 'year':
+        cutoff = now - 365 * 24 * 60 * 60 * 1000;
+        break;
+    }
+
+    // 筛选并汇总数据
+    var filteredStats = {};
+    var totalDownload = 0;
+    var totalUpload = 0;
+    var totalConnections = 0;
+    var totalTime = 0;
+
+    Object.keys(stats).forEach(function(host) {
+      var hostStats = stats[host];
+      var filteredTimestamps = (hostStats.timestamps || []).filter(function(t) {
+        return t.time > cutoff;
+      });
+
+      if (filteredTimestamps.length > 0) {
+        var download = 0;
+        var upload = 0;
+        filteredTimestamps.forEach(function(t) {
+          download += t.download || 0;
+          upload += t.upload || 0;
+        });
+
+        filteredStats[host] = {
+          download: download,
+          upload: upload,
+          connections: filteredTimestamps.length,
+          totalTime: hostStats.totalTime || 0,
+          type: hostStats.type || 'xmlhttprequest'
+        };
+
+        totalDownload += download;
+        totalUpload += upload;
+        totalConnections += filteredTimestamps.length;
+        totalTime += hostStats.totalTime || 0;
+      }
+    });
+
+    // 更新汇总卡片
+    document.getElementById('total-download').textContent = formatSize(totalDownload);
+    document.getElementById('total-upload').textContent = formatSize(totalUpload);
+    document.getElementById('total-connections').textContent = totalConnections;
+    document.getElementById('total-time').textContent = formatTime(totalTime);
+  });
 }

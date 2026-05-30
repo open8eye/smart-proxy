@@ -1,6 +1,6 @@
 // ============================================================
 // background.js — 扩展后台脚本（Service Worker）
-// 职责：代理控制、标签页监听、图标动画、消息通信
+// 职责：代理控制、标签页监听、图标动画、消息通信、流量统计
 // ============================================================
 
 // --- 图标动画状态 ---
@@ -10,6 +10,10 @@ var totalFrames = 24;           // 总帧数
 
 // --- 定时检测状态 ---
 var pendingCheckTimer = null;   // pending状态检测定时器
+
+// --- 流量统计状态 ---
+var trafficStats = {};          // 流量统计数据 { host: { download, upload, connections, totalTime, type, ... } }
+var activeConnections = {};     // 活跃连接 { requestId: { startTime, host, ... } }
 
 // --- 默认智能代理域名列表 ---
 var DEFAULT_SMART_DOMAINS = [
@@ -49,6 +53,121 @@ chrome.runtime.onStartup.addListener(function() {
   restoreProxySettings();
 });
 
+// ============================================================
+// 流量统计功能
+// ============================================================
+
+// 加载流量统计数据
+function loadTrafficStats() {
+  chrome.storage.local.get(['trafficStats'], function(result) {
+    if (result.trafficStats) {
+      trafficStats = result.trafficStats;
+    }
+  });
+}
+
+// 保存流量统计数据
+function saveTrafficStats() {
+  chrome.storage.local.set({ trafficStats: trafficStats });
+}
+
+// 记录网络请求开始
+function onRequestStarted(details) {
+  var url = details.url;
+  var host = '';
+  try {
+    host = new URL(url).hostname;
+  } catch (e) {
+    return;
+  }
+  if (!host) return;
+
+  activeConnections[details.requestId] = {
+    startTime: Date.now(),
+    host: host,
+    url: url,
+    type: details.type,
+    tabId: details.tabId
+  };
+}
+
+// 记录网络请求完成
+function onRequestCompleted(details) {
+  var conn = activeConnections[details.requestId];
+  if (!conn) return;
+
+  var host = conn.host;
+  var duration = Date.now() - conn.startTime;
+  var responseHeaders = details.responseHeaders || [];
+  var contentLength = 0;
+
+  // 从响应头获取内容长度
+  for (var i = 0; i < responseHeaders.length; i++) {
+    if (responseHeaders[i].name.toLowerCase() === 'content-length') {
+      contentLength = parseInt(responseHeaders[i].value, 10) || 0;
+      break;
+    }
+  }
+
+  // 初始化主机统计数据
+  if (!trafficStats[host]) {
+    trafficStats[host] = {
+      download: 0,
+      upload: 0,
+      connections: 0,
+      totalTime: 0,
+      type: conn.type,
+      timestamps: []
+    };
+  }
+
+  var stats = trafficStats[host];
+  stats.download += contentLength;
+  stats.connections += 1;
+  stats.totalTime += duration;
+  stats.type = conn.type;
+  stats.timestamps.push({
+    time: conn.startTime,
+    download: contentLength,
+    upload: 0
+  });
+
+  // 清理旧数据（保留最近90天）
+  var cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+  stats.timestamps = stats.timestamps.filter(function(t) {
+    return t.time > cutoff;
+  });
+
+  delete activeConnections[details.requestId];
+
+  // 定期保存（每10个请求保存一次）
+  if (Object.keys(activeConnections).length % 10 === 0) {
+    saveTrafficStats();
+  }
+}
+
+// 设置webRequest监听器
+function setupTrafficMonitoring() {
+  if (chrome.webRequest) {
+    chrome.webRequest.onBeforeRequest.addListener(
+      onRequestStarted,
+      { urls: ['<all_urls>'] }
+    );
+
+    chrome.webRequest.onCompleted.addListener(
+      onRequestCompleted,
+      { urls: ['<all_urls>'] },
+      ['responseHeaders']
+    );
+  }
+}
+
+// 清除流量统计数据
+function clearTrafficStats() {
+  trafficStats = {};
+  chrome.storage.local.remove('trafficStats');
+}
+
 // 初始化扩展：为所有存储项设置默认值（仅在不存在时）
 function initializeExtension() {
   chrome.storage.local.get(['proxies', 'activeProxyId', 'tabProxies', 'favorites', 'options', 'proxyMode', 'smartDomains'], function(result) {
@@ -83,6 +202,10 @@ function initializeExtension() {
       restoreProxySettings();
     }
   });
+
+  // 初始化流量统计
+  loadTrafficStats();
+  setupTrafficMonitoring();
 }
 
 // 恢复代理设置：浏览器启动时自动应用上次使用的代理
@@ -564,6 +687,13 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       }
       sendResponse({ success: false, latency: -1 });
     });
+    return true;
+  }
+
+  // 清除流量统计数据
+  if (message.action === 'clearTrafficStats') {
+    clearTrafficStats();
+    sendResponse({ success: true });
     return true;
   }
 });

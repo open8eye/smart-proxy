@@ -17,6 +17,15 @@
       </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="general" data-i18n="generalSettings"></button>
+      <button class="tab-btn" data-tab="statistics" data-i18n="usageStatistics"></button>
+    </div>
+
+    <!-- General Settings Tab -->
+    <div id="tab-general" class="tab-content active">
+
     <div class="card">
       <div class="card-header">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -169,6 +178,54 @@
     </div>
 
     <div id="status-message" class="status-message"></div>
+    </div> <!-- End tab-general -->
+
+    <!-- Statistics Tab -->
+    <div id="tab-statistics" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+          </svg>
+          <h2 data-i18n="trafficStats"></h2>
+        </div>
+        <div class="card-body">
+          <!-- Date Filter -->
+          <div class="stats-filter">
+            <button class="btn btn-sm active" data-period="day" data-i18n="today"></button>
+            <button class="btn btn-sm" data-period="week" data-i18n="thisWeek"></button>
+            <button class="btn btn-sm" data-period="month" data-i18n="thisMonth"></button>
+            <button class="btn btn-sm" data-period="year" data-i18n="thisYear"></button>
+          </div>
+
+          <!-- Summary Cards -->
+          <div class="stats-summary">
+            <div class="summary-card">
+              <div class="summary-value" id="total-download">0 B</div>
+              <div class="summary-label" data-i18n="totalDownload"></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value" id="total-upload">0 B</div>
+              <div class="summary-label" data-i18n="totalUpload"></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value" id="total-connections">0</div>
+              <div class="summary-label" data-i18n="totalConnections"></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value" id="total-time">0s</div>
+              <div class="summary-label" data-i18n="totalTime"></div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="refresh-stats-btn" class="btn btn-primary" data-i18n="refreshStats"></button>
+            <button id="clear-stats-btn" class="btn btn-danger" data-i18n="clearStats"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div id="edit-proxy-modal" class="modal-overlay">
