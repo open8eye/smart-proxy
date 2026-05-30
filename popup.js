@@ -3,6 +3,8 @@
 // 职责：代理开关控制、代理选择、延迟显示、收藏管理、UI 更新
 // ============================================================
 
+var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined' && typeof browser.proxy.onRequest !== 'undefined';
+
 // 获取浏览器默认语言
 function getDefaultLanguage() {
   const available = ['zh_CN', 'zh_TW', 'en', 'ja', 'ko', 'fr', 'de', 'es'];
@@ -160,6 +162,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return false;
   }
 
+  // URL 解析完成后：判断代理状态并更新 UI
+  function afterUrlResolved(tabId, storageResult) {
+    chrome.storage.local.get(['tabProxies'], tabResult => {
+      const tabProxies = tabResult.tabProxies || {};
+      if (tabProxies[tabId]) {
+        activeProxyId = tabProxies[tabId];
+        tabExplicitlyProxied = true;
+      } else {
+        activeProxyId = storageResult.activeProxyId || null;
+        tabExplicitlyProxied = false;
+      }
+      currentTabProxied = tabExplicitlyProxied || (currentTabHostname ? isDomainInList(currentTabHostname, favoritesList) : false);
+      if (!currentTabProxied && proxyMode === 'smart') {
+        currentTabProxied = currentTabHostname ? isDomainInList(currentTabHostname, smartDomains) : false;
+      }
+      renderProxySelect();
+      elements.proxyModeSelect.value = proxyMode;
+      updateToggleState();
+      updateStatusBar();
+      updateCurrentUrlDisplay();
+      updateActionButtons();
+    });
+  }
+
   // ============================================================
   // 状态加载：从 storage 读取所有状态并更新 UI
   // ============================================================
@@ -175,30 +201,27 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
           if (tabs.length > 0) {
             const tabId = tabs[0].id;
-            const tabUrl = tabs[0].pendingUrl || tabs[0].url || '';
-            try { currentTabHostname = new URL(tabUrl).hostname; } catch (e) { currentTabHostname = ''; }
-            // 检查当前标签页是否有手动设置的代理
-            chrome.storage.local.get(['tabProxies'], tabResult => {
-              const tabProxies = tabResult.tabProxies || {};
-              if (tabProxies[tabId]) {
-                activeProxyId = tabProxies[tabId];
-                tabExplicitlyProxied = true;
-              } else {
-                activeProxyId = result.activeProxyId || null;
-                tabExplicitlyProxied = false;
-              }
-              // 判断当前标签页是否应该被代理（手动代理 或 收藏域名 或 智能域名）
-              currentTabProxied = tabExplicitlyProxied || (currentTabHostname ? isDomainInList(currentTabHostname, favoritesList) : false);
-              if (!currentTabProxied && proxyMode === 'smart') {
-                currentTabProxied = currentTabHostname ? isDomainInList(currentTabHostname, smartDomains) : false;
-              }
-              renderProxySelect();
-              elements.proxyModeSelect.value = proxyMode;
-              updateToggleState();
-              updateStatusBar();
-              updateCurrentUrlDisplay();
-              updateActionButtons();
-            });
+            const tab = tabs[0];
+            const tabUrl = tab.pendingUrl || tab.url || '';
+
+            // Firefox 回退：从 background 获取 onBeforeRequest 缓存的 URL
+            const resolveUrl = (url) => {
+              try { currentTabHostname = new URL(url).hostname; } catch (e) { currentTabHostname = ''; }
+            };
+
+            if (IS_FIREFOX) {
+              chrome.runtime.sendMessage({ action: 'getFirefoxPendingUrl', tabId: tabId }, (resp) => {
+                const firefoxUrl = (resp && resp.pendingUrl) || '';
+                console.log('[popup] Firefox tabUrl=' + tabUrl, 'cachedUrl=' + firefoxUrl, 'tab.status=' + tab.status);
+                // 优先使用缓存的 URL（loading 状态下更准确）
+                const bestUrl = (tab.status === 'loading' && firefoxUrl) ? firefoxUrl : (tabUrl || firefoxUrl);
+                resolveUrl(bestUrl);
+                afterUrlResolved(tabId, result);
+              });
+            } else {
+              resolveUrl(tabUrl);
+              afterUrlResolved(tabId, result);
+            }
           } else {
             activeProxyId = result.activeProxyId || null;
             currentTabHostname = '';

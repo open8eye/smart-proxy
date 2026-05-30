@@ -6,6 +6,8 @@
 // --- 浏览器检测 ---
 var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined' && typeof browser.proxy.onRequest !== 'undefined';
 var firefoxProxyInfo = null;
+var firefoxPendingUrls = {};    // {tabId: url} Firefox pending URL 存储
+var firefoxRedirectedTabs = {}; // {tabId: true} 防止重定向死循环
 
 // --- 日志收集 ---
 var logBuffer = [];
@@ -227,6 +229,17 @@ function setupFirefoxProxy() {
   browser.proxy.onError.addListener(function(error) {
     console.error('[代理错误]', error.message);
   });
+
+  // Firefox URL 监听：通过 onBeforeRequest 获取 pending URL
+  chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+      if (details.tabId >= 0 && details.type === 'main_frame') {
+        firefoxPendingUrls[details.tabId] = details.url;
+        console.log('[Firefox] 存储pending URL: tabId=' + details.tabId, 'url=' + details.url, 'redirected=' + !!firefoxRedirectedTabs[details.tabId]);
+      }
+    },
+    { urls: ['<all_urls>'] }
+  );
 }
 
 // 初始化扩展：为所有存储项设置默认值（仅在不存在时）
@@ -367,6 +380,15 @@ function createCanvas(width, height) {
   canvas.width = width;
   canvas.height = height;
   return canvas;
+}
+
+// 安全调用 chrome.tabs.update
+function safeTabUpdate(tabId, props) {
+  if (IS_FIREFOX) {
+    chrome.tabs.update(tabId, props);
+  } else {
+    chrome.tabs.update(tabId, props).catch(function() {});
+  }
 }
 
 // 设置扩展图标（兼容 Chrome action 和 Firefox browserAction）
@@ -575,6 +597,10 @@ function isDomainInList(hostname, list) {
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   var status = changeInfo.status || 'complete';
   var url = changeInfo.url || (status === 'loading' ? (tab.pendingUrl || tab.url) : null);
+
+  if (IS_FIREFOX) {
+    console.log('[URL更新][Firefox调试] 标签页=' + tabId, 'changeInfo=', JSON.stringify(changeInfo), 'tab.url=' + tab.url, 'tab.pendingUrl=' + tab.pendingUrl, 'tab.status=' + tab.status);
+  }
   if (!url) return;
   if (url.indexOf('http://') !== 0 && url.indexOf('https://') !== 0) return;
 
@@ -589,12 +615,22 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     }
   } else {
     console.log('[URL更新] 标签页=' + tabId, '状态=' + status, '网址=' + url);
+    // 标签页加载完成：清理 Firefox 缓存和重定向标记
+    if (IS_FIREFOX && status === 'complete') {
+      delete firefoxPendingUrls[tabId];
+      delete firefoxRedirectedTabs[tabId];
+    }
   }
 });
 
 // 监听标签页关闭：清理已关闭标签页的代理记录
 chrome.tabs.onRemoved.addListener(function(tabId) {
   console.log('[标签页关闭] 标签页=' + tabId);
+  // 清理 Firefox 缓存
+  if (IS_FIREFOX) {
+    delete firefoxPendingUrls[tabId];
+    delete firefoxRedirectedTabs[tabId];
+  }
   chrome.storage.local.get(['tabProxies'], function(result) {
     var tabProxies = result.tabProxies || {};
     if (tabProxies[tabId]) {
@@ -664,7 +700,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
           var tab = tabs[0];
           console.log('[消息] setProxy 完成，刷新标签页:', tab.id, tab.url);
           if (tab.status === 'loading' && tab.pendingUrl) {
-            chrome.tabs.update(tab.id, { url: tab.pendingUrl }).catch(function(){});
+            safeTabUpdate(tab.id, { url: tab.pendingUrl });
           } else if (tab.url && tab.url.indexOf('http') === 0) {
             chrome.tabs.reload(tab.id);
           }
@@ -749,6 +785,14 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     return true;
   }
 
+  // 获取 Firefox pending URL（供 popup 使用）
+  if (message.action === 'getFirefoxPendingUrl') {
+    var tabId = message.tabId;
+    var pendingUrl = firefoxPendingUrls[tabId] || '';
+    sendResponse({ success: true, pendingUrl: pendingUrl });
+    return false;
+  }
+
   // 设置代理模式（页面/全局/智能）
   if (message.action === 'setProxyMode') {
     console.log('[模式切换] 切换到模式: ' + message.mode);
@@ -766,7 +810,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 // 如果标签页处于pending状态，使用tabs.update保持URL
                 if (tab.status === 'loading' && tab.pendingUrl) {
                   console.log('[模式切换] 标签页pending中，重定向: ' + tab.pendingUrl);
-                  chrome.tabs.update(tab.id, { url: tab.pendingUrl }).catch(function(){});
+                  safeTabUpdate(tab.id, { url: tab.pendingUrl });
                 } else if (tab.url && tab.url.indexOf('http') === 0) {
                   console.log('[模式切换] 刷新标签页: ' + tab.id);
                   chrome.tabs.reload(tab.id);
@@ -923,17 +967,29 @@ function checkAllTabs() {
         var tab = tabs[i];
         var tabId = tab.id;
 
-        // 获取当前URL（pending状态下优先使用pendingUrl）
+        // 获取当前URL（pending状态下优先使用pendingUrl，Firefox使用onBeforeRequest缓存）
         var url = tab.url;
         var pendingUrl = tab.pendingUrl;
+        // Firefox 回退：使用 onBeforeRequest 缓存的 URL
+        if (IS_FIREFOX && !pendingUrl && firefoxPendingUrls[tabId]) {
+          pendingUrl = firefoxPendingUrls[tabId];
+        }
         var currentUrl = pendingUrl || url;
+
+        // Firefox: 标记是否已有缓存的 pending URL（用于判断 pending 状态）
+        var hasFirefoxPending = IS_FIREFOX && !tab.pendingUrl && !!firefoxPendingUrls[tabId] && tab.status === 'loading';
+        
+        if (IS_FIREFOX && tab.active) {
+          console.log('[定时检测][Firefox] 活动标签页=' + tabId, 'url=' + url, 'pendingUrl=' + tab.pendingUrl, 'cachedPending=' + firefoxPendingUrls[tabId], 'currentUrl=' + currentUrl);
+        }
         
         if (!currentUrl) continue;
         if (currentUrl.indexOf('http://') !== 0 && currentUrl.indexOf('https://') !== 0) continue;
 
         // 打印每个标签页的状态
         var statusInfo = tab.status;
-        if (tab.status === 'loading' && pendingUrl) {
+        var isPending = (tab.status === 'loading' && pendingUrl) || hasFirefoxPending;
+        if (isPending) {
           statusInfo = 'pending';
           console.log('[定时检测] 标签页=' + tabId, '状态=pending', 'pending地址=' + pendingUrl, '活动=' + tab.active);
         } else {
@@ -952,10 +1008,11 @@ function checkAllTabs() {
               chrome.storage.local.set({ activeProxyId: tabProxies[tabId] });
               startIconAnimation('on');
 
-              // pending状态下重定向到代理
-              if (tab.status === 'loading' && pendingUrl) {
+              // pending状态下重定向到代理（防循环：检查是否已重定向）
+              if (isPending && !firefoxRedirectedTabs[tabId]) {
                 console.log('[定时检测] 已有代理的标签页pending中，重定向到代理: ' + pendingUrl);
-                chrome.tabs.update(tabId, { url: pendingUrl }).catch(function(){});
+                if (IS_FIREFOX) firefoxRedirectedTabs[tabId] = true;
+                safeTabUpdate(tabId, { url: pendingUrl });
               }
             }
           }
@@ -1001,10 +1058,13 @@ function checkAllTabs() {
             chrome.storage.local.set({ activeProxyId: proxyId, tabProxies: tabProxies });
             startIconAnimation('on');
 
-            if (tab.status === 'loading' && pendingUrl) {
-              // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求
-              console.log('[定时检测] 页面pending中，重定向到代理: ' + pendingUrl);
-              chrome.tabs.update(tabId, { url: pendingUrl }).catch(function(){});
+            if (isPending) {
+              // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求（防循环）
+              if (!firefoxRedirectedTabs[tabId]) {
+                console.log('[定时检测] 页面pending中，重定向到代理: ' + pendingUrl);
+                if (IS_FIREFOX) firefoxRedirectedTabs[tabId] = true;
+                safeTabUpdate(tabId, { url: pendingUrl });
+              }
             } else if (tab.status === 'complete') {
               // 页面加载完成，reload让代理生效
               console.log('[定时检测] 页面加载完成，重新加载让代理生效');

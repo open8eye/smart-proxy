@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
   "version": "1.0.0",
@@ -9,7 +9,7 @@
     "48": "icons/earth.png",
     "128": "icons/earth.png"
   },
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/earth.png",
@@ -19,17 +19,18 @@
     "default_title": "__MSG_extName__"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "permissions": [
     "proxy",
     "storage",
     "tabs",
     "activeTab",
-    "webRequest"
-  ],
-  "host_permissions": [
+    "webRequest",
     "<all_urls>"
   ],
   "commands": {
@@ -39,6 +40,12 @@
         "default": "Ctrl+Shift+P",
         "mac": "Command+Shift+P"
       }
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "smart-proxy@extension",
+      "strict_min_version": "91.0"
     }
   }
 }
