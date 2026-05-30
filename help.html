@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Proxy Help</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 24px; line-height: 1.7; color: #1f2937; background: #f9fafb; }
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e5e7eb; }
+    .header img { width: 48px; height: 48px; }
+    .header h1 { font-size: 24px; color: #111827; flex: 1; }
+    #langSelect { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; color: #374151; background: white; cursor: pointer; outline: none; }
+    #langSelect:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
+    .section { margin-bottom: 24px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .section h2 { font-size: 18px; color: #4f46e5; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6; }
+    .section h3 { font-size: 15px; color: #374151; margin: 12px 0 8px; }
+    .section p, .section li { font-size: 14px; color: #4b5563; }
+    .section ul, .section ol { padding-left: 24px; margin: 8px 0; }
+    .section li { margin-bottom: 6px; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: 'SF Mono', Monaco, monospace; }
+    strong { color: #1f2937; }
+    a { color: #4f46e5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/earth.png" alt="Smart Proxy">
+    <h1>Smart Proxy</h1>
+    <select id="langSelect">
+      <option value="zh_CN">简体中文</option>
+      <option value="zh_TW">繁體中文</option>
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
+  <div id="helpContent"></div>
+  <script src="help.js"></script>
+</body>
+</html>

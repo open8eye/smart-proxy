@@ -1,0 +1,285 @@
+{
+  "extName": {
+    "message": "Smart Proxy",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "간단하고 효율적인 프록시 관리 도구. 지연 시간 테스트 및 웹사이트 즐겨찾기 기능 포함",
+    "description": "Extension description"
+  },
+  "status": {
+    "message": "상태",
+    "description": "Proxy status label"
+  },
+  "disconnected": {
+    "message": "연결 끊김",
+    "description": "Disconnected status"
+  },
+  "latency": {
+    "message": "$MS$ 밀리초",
+    "description": "Latency display with millisecond placeholder",
+    "placeholders": {
+      "ms": {
+        "content": "$1",
+        "example": "120"
+      }
+    }
+  },
+  "selectProxy": {
+    "message": "프록시 선택...",
+    "description": "Proxy selection placeholder"
+  },
+  "edit": {
+    "message": "편집",
+    "description": "Edit button"
+  },
+  "delete": {
+    "message": "삭제",
+    "description": "Delete button"
+  },
+  "favorite": {
+    "message": "즐겨찾기",
+    "description": "Favorite button"
+  },
+  "addProxy": {
+    "message": "프록시 추가",
+    "description": "Add proxy button"
+  },
+  "help": {
+    "message": "도움말",
+    "description": "Help button"
+  },
+  "settings": {
+    "message": "설정",
+    "description": "Settings button"
+  },
+  "apply": {
+    "message": "적용",
+    "description": "Apply button"
+  },
+  "cancel": {
+    "message": "취소",
+    "description": "Cancel button"
+  },
+  "save": {
+    "message": "저장",
+    "description": "Save button"
+  },
+  "reset": {
+    "message": "초기화",
+    "description": "Reset button"
+  },
+  "confirm": {
+    "message": "확인",
+    "description": "Confirm button"
+  },
+  "proxyName": {
+    "message": "프록시 이름",
+    "description": "Proxy name label"
+  },
+  "proxyType": {
+    "message": "프록시 유형",
+    "description": "Proxy type label"
+  },
+  "proxyHost": {
+    "message": "호스트",
+    "description": "Proxy host label"
+  },
+  "proxyPort": {
+    "message": "포트",
+    "description": "Proxy port label"
+  },
+  "proxyUsername": {
+    "message": "사용자 이름 (선택사항)",
+    "description": "Proxy username label"
+  },
+  "proxyPassword": {
+    "message": "비밀번호 (선택사항)",
+    "description": "Proxy password label"
+  },
+  "startupRestore": {
+    "message": "브라우저 시작 시 프록시 설정 복원",
+    "description": "Startup restore setting"
+  },
+  "quickSwitch": {
+    "message": "빠른 전환 단축키 활성화 (Ctrl+Shift+P)",
+    "description": "Quick switch shortcut setting"
+  },
+  "cascadeProxy": { "message": "캐스케이드 프록시：프록시된 탭에서 열린 새 탭도 자동으로 프록시" },
+  "bypassList": {
+    "message": "우회 목록",
+    "description": "Bypass list label"
+  },
+  "bypassListPlaceholder": {
+    "message": "프록시를 우회할 호스트 (한 줄에 하나씩)",
+    "description": "Bypass list placeholder"
+  },
+  "proxyManagement": {
+    "message": "프록시 관리",
+    "description": "Proxy management section"
+  },
+  "favoritesManagement": {
+    "message": "즐겨찾기 관리",
+    "description": "Favorites management section"
+  },
+  "languageSetting": {
+    "message": "언어",
+    "description": "Language setting"
+  },
+  "importExport": {
+    "message": "가져오기/내보내기",
+    "description": "Import/Export section"
+  },
+  "import": {
+    "message": "가져오기",
+    "description": "Import button"
+  },
+  "export": {
+    "message": "내보내기",
+    "description": "Export button"
+  },
+  "resetAll": {
+    "message": "모두 초기화",
+    "description": "Reset all button"
+  },
+  "saveSettings": {
+    "message": "설정 저장",
+    "description": "Save settings button"
+  },
+  "connected": {
+    "message": "연결됨",
+    "description": "Connected status"
+  },
+  "standby": {
+    "message": "대기",
+    "description": "대기 상태"
+  },
+  "globalProxy": {
+    "message": "글로벌 프록시",
+    "description": "Global proxy mode"
+  },
+  "tabProxy": {
+    "message": "탭 프록시",
+    "description": "Tab proxy mode"
+  },
+  "deleteConfirm": {
+    "message": "이 프록시를 삭제하시겠습니까?",
+    "description": "Delete confirmation message"
+  },
+  "favoriteConfirm": {
+    "message": "이 웹사이트의 프록시 설정을 기억하시겠습니까? 다음 방문 시 자동으로 활성화됩니다.",
+    "description": "Favorite confirmation message"
+  },
+  "proxyAdded": {
+    "message": "프록시가 성공적으로 추가되었습니다",
+    "description": "Proxy added success message"
+  },
+  "proxyUpdated": {
+    "message": "프록시가 성공적으로 업데이트되었습니다",
+    "description": "Proxy updated success message"
+  },
+  "proxyDeleted": {
+    "message": "프록시가 성공적으로 삭제되었습니다",
+    "description": "Proxy deleted success message"
+  },
+  "settingsSaved": {
+    "message": "설정이 저장되었습니다",
+    "description": "Settings saved message"
+  },
+  "settingsReset": {
+    "message": "모든 설정이 초기화되었습니다",
+    "description": "Settings reset message"
+  },
+  "importSuccess": {
+    "message": "가져오기가 성공했습니다",
+    "description": "Import success message"
+  },
+  "importError": {
+    "message": "가져오기 실패: 잘못된 데이터 형식",
+    "description": "Import error message"
+  },
+  "exportSuccess": {
+    "message": "데이터가 텍스트 상자로 내보내졌습니다",
+    "description": "Export success message"
+  },
+  "noProxy": {
+    "message": "프록시가 설정되지 않았습니다",
+    "description": "No proxy configured message"
+  },
+  "noFavorite": {
+    "message": "즐겨찾기가 없습니다",
+    "description": "No favorites message"
+  },
+  "favoriteAdded": {
+    "message": "웹사이트가 즐겨찾기에 추가되었습니다",
+    "description": "Favorite added message"
+  },
+  "favoriteRemoved": {
+    "message": "즐겨찾기에서 제거되었습니다",
+    "description": "Favorite removed message"
+  },
+  "toggleProxyCmd": {
+    "message": "프록시 상태 전환",
+    "description": "Toggle proxy command"
+  },
+  "optionsTitle": { "message": "Smart Proxy 설정" },
+  "optionsSubtitle": { "message": "프록시 설정을 구성하세요" },
+  "basicSettings": { "message": "기본 설정" },
+  "bypassListTitle": { "message": "우회 목록" },
+  "bypassListLabel": { "message": "프록시를 우회할 호스트 (한 줄에 하나씩)" },
+  "tableName": { "message": "이름" },
+  "tableType": { "message": "유형" },
+  "tableHost": { "message": "호스트" },
+  "tablePort": { "message": "포트" },
+  "tableUsername": { "message": "사용자 이름" },
+  "tableActions": { "message": "작업" },
+  "noProxies": { "message": "아직 프록시가 설정되지 않았습니다" },
+  "noFavorites": { "message": "아직 즐겨찾기가 없습니다" },
+  "languageLabel": { "message": "언어 선택" },
+  "languageSettings": { "message": "언어 설정" },
+  "importExportLabel": { "message": "프록시 설정 가져오기/내보내기 (JSON 형식)" },
+  "importExportPlaceholder": { "message": "여기에 JSON 데이터를 붙여넣으세요..." },
+  "importBtn": { "message": "가져오기" },
+  "exportBtn": { "message": "내보내기" },
+  "resetBtn": { "message": "모두 초기화" },
+  "saveBtn": { "message": "설정 저장" },
+  "editProxy": { "message": "프록시 편집" },
+  "proxyNamePlaceholder": { "message": "프록시 이름을 입력하세요" },
+  "proxyHostPlaceholder": { "message": "예: 127.0.0.1" },
+  "proxyPortPlaceholder": { "message": "예: 8080" },
+  "proxyUsernamePlaceholder": { "message": "사용자 이름을 입력하세요" },
+  "proxyPasswordPlaceholder": { "message": "비밀번호를 입력하세요" },
+  "cancelBtn": { "message": "취소" },
+  "saveProxyBtn": { "message": "저장" },
+  "editBtn": { "message": "편집" },
+  "deleteBtn": { "message": "삭제" },
+  "removeFavorite": { "message": "제거" },
+  "languageSaved": { "message": "언어 설정이 저장되었습니다" },
+  "nameRequired": { "message": "프록시 이름은 필수입니다" },
+  "hostRequired": { "message": "호스트는 필수입니다" },
+  "portInvalid": { "message": "포트는 1에서 65535 사이여야 합니다" },
+  "proxySaved": { "message": "프록시가 성공적으로 저장되었습니다" },
+  "confirmDeleteProxy": { "message": "이 프록시를 삭제하시겠습니까?" },
+  "confirmRemoveFavorite": { "message": "이 즐겨찾기를 제거하시겠습니까?" },
+  "importEmpty": { "message": "가져올 데이터를 붙여넣으세요" },
+  "importFormatError": { "message": "잘못된 데이터 형식입니다. 프록시 JSON 배열이 필요합니다." },
+  "exportEmpty": { "message": "내보낼 프록시가 없습니다" },
+  "confirmReset": { "message": "모든 설정과 프록시가 삭제됩니다. 계속하시겠습니까?" },
+  "optionsSaved": { "message": "설정이 성공적으로 저장되었습니다" },
+  "optionsReset": { "message": "모든 설정이 초기화되었습니다" },
+  "proxyMode": { "message": "프록시 모드", "description": "Proxy mode label" },
+  "modePage": { "message": "페이지", "description": "Page mode" },
+  "modeGlobal": { "message": "글로벌", "description": "Global mode" },
+  "modeSmart": { "message": "규칙", "description": "Rule mode" },
+  "refreshLatency": { "message": "클릭하여 지연 시간 새로고침", "description": "Refresh latency tooltip" },
+  "creditText": { "message": "원저작자: xubaifu97에게 특별히 감사드립니다. 저작권 침해 시 즉시 삭제됩니다", "description": "Credit text" },
+  "smartDomainsTitle": { "message": "규칙 도메인 설정" },
+  "smartDomainsLabel": { "message": "규칙 프록시 모드의 도메인 목록 설정 (한 줄에 하나씩, 와일드카드 *.example.com 지원)" },
+  "smartDomainsPlaceholder": { "message": "*.google.com\n*.youtube.com\n*.twitter.com" },
+  "pacScriptTitle": { "message": "PAC 스크립트 설정" },
+  "pacScriptLabel": { "message": "PAC 스크립트 (규칙 도메인과 즐겨찾기가 자동 동기화되며, 주석으로 표시된 부분은 삭제할 수 없습니다)" },
+  "syncedSmartDomains": { "message": "자동 동기화된 규칙 도메인" },
+  "syncedFavorites": { "message": "자동 동기화된 즐겨찾기 도메인" },
+  "savePacScript": { "message": "PAC 스크립트 저장" },
+  "pacSaved": { "message": "PAC 스크립트가 저장되었습니다" }
+}

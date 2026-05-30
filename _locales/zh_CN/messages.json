@@ -1,0 +1,293 @@
+{
+  "extName": {
+    "message": "Smart Proxy",
+    "description": "扩展名称"
+  },
+  "extDescription": {
+    "message": "简洁高效的代理管理工具，支持延迟测试和网站收藏",
+    "description": "扩展描述"
+  },
+  "status": {
+    "message": "状态",
+    "description": "代理状态标签"
+  },
+  "disconnected": {
+    "message": "未连接",
+    "description": "未连接状态"
+  },
+  "latency": {
+    "message": "$MS$ 毫秒",
+    "description": "延迟显示，包含毫秒占位符",
+    "placeholders": {
+      "ms": {
+        "content": "$1",
+        "example": "120"
+      }
+    }
+  },
+  "latencyFailed": {
+    "message": "超时",
+    "description": "延迟测试失败显示"
+  },
+  "selectProxy": {
+    "message": "选择代理...",
+    "description": "代理选择占位符"
+  },
+  "edit": {
+    "message": "编辑",
+    "description": "编辑按钮"
+  },
+  "delete": {
+    "message": "删除",
+    "description": "删除按钮"
+  },
+  "favorite": {
+    "message": "收藏",
+    "description": "收藏按钮"
+  },
+  "addProxy": {
+    "message": "添加代理",
+    "description": "添加代理按钮"
+  },
+  "help": {
+    "message": "帮助",
+    "description": "帮助按钮"
+  },
+  "settings": {
+    "message": "设置",
+    "description": "设置按钮"
+  },
+  "apply": {
+    "message": "应用",
+    "description": "应用按钮"
+  },
+  "cancel": {
+    "message": "取消",
+    "description": "取消按钮"
+  },
+  "save": {
+    "message": "保存",
+    "description": "保存按钮"
+  },
+  "reset": {
+    "message": "重置",
+    "description": "重置按钮"
+  },
+  "confirm": {
+    "message": "确认",
+    "description": "确认按钮"
+  },
+  "proxyName": {
+    "message": "代理名称",
+    "description": "代理名称标签"
+  },
+  "proxyType": {
+    "message": "代理类型",
+    "description": "代理类型标签"
+  },
+  "proxyHost": {
+    "message": "主机地址",
+    "description": "代理主机标签"
+  },
+  "proxyPort": {
+    "message": "端口",
+    "description": "代理端口标签"
+  },
+  "proxyUsername": {
+    "message": "用户名（可选）",
+    "description": "代理用户名标签"
+  },
+  "proxyPassword": {
+    "message": "密码（可选）",
+    "description": "代理密码标签"
+  },
+  "startupRestore": {
+    "message": "浏览器启动时恢复代理设置",
+    "description": "启动时恢复设置"
+  },
+  "favoriteQuickProxy": {
+    "message": "收藏域名快速代理（任何模式下生效）",
+    "description": "收藏快速代理设置"
+  },
+  "quickSwitch": {
+    "message": "启用快速切换快捷键 (Ctrl+Shift+P)",
+    "description": "快速切换快捷键设置"
+  },
+  "cascadeProxy": { "message": "级联代理：从代理标签页打开的新标签页也自动代理" },
+  "bypassList": {
+    "message": "绕过列表",
+    "description": "绕过列表标签"
+  },
+  "bypassListPlaceholder": {
+    "message": "绕过代理的主机（每行一个）",
+    "description": "绕过列表占位符"
+  },
+  "proxyManagement": {
+    "message": "代理管理",
+    "description": "代理管理部分"
+  },
+  "favoritesManagement": {
+    "message": "收藏管理",
+    "description": "收藏管理部分"
+  },
+  "languageSetting": {
+    "message": "语言",
+    "description": "语言设置"
+  },
+  "importExport": {
+    "message": "导入/导出",
+    "description": "导入/导出部分"
+  },
+  "import": {
+    "message": "导入",
+    "description": "导入按钮"
+  },
+  "export": {
+    "message": "导出",
+    "description": "导出按钮"
+  },
+  "resetAll": {
+    "message": "全部重置",
+    "description": "全部重置按钮"
+  },
+  "saveSettings": {
+    "message": "保存设置",
+    "description": "保存设置按钮"
+  },
+  "connected": {
+    "message": "已连接",
+    "description": "已连接状态"
+  },
+  "standby": {
+    "message": "待机",
+    "description": "待机状态"
+  },
+  "globalProxy": {
+    "message": "全局代理",
+    "description": "全局代理模式"
+  },
+  "tabProxy": {
+    "message": "标签页代理",
+    "description": "标签页代理模式"
+  },
+  "deleteConfirm": {
+    "message": "确定要删除此代理吗？",
+    "description": "删除确认消息"
+  },
+  "favoriteConfirm": {
+    "message": "为此网站记住代理设置？下次访问将自动启用。",
+    "description": "收藏确认消息"
+  },
+  "proxyAdded": {
+    "message": "代理添加成功",
+    "description": "代理添加成功消息"
+  },
+  "proxyUpdated": {
+    "message": "代理更新成功",
+    "description": "代理更新成功消息"
+  },
+  "proxyDeleted": {
+    "message": "代理删除成功",
+    "description": "代理删除成功消息"
+  },
+  "settingsSaved": {
+    "message": "设置已保存",
+    "description": "设置已保存消息"
+  },
+  "settingsReset": {
+    "message": "所有设置已重置",
+    "description": "设置重置消息"
+  },
+  "importSuccess": {
+    "message": "导入成功",
+    "description": "导入成功消息"
+  },
+  "importError": {
+    "message": "导入失败：数据格式无效",
+    "description": "导入错误消息"
+  },
+  "exportSuccess": {
+    "message": "数据已导出到文本框",
+    "description": "导出成功消息"
+  },
+  "noProxy": {
+    "message": "未配置代理",
+    "description": "无代理配置消息"
+  },
+  "noFavorite": {
+    "message": "暂无收藏",
+    "description": "无收藏消息"
+  },
+  "favoriteAdded": {
+    "message": "网站已收藏",
+    "description": "收藏添加消息"
+  },
+  "favoriteRemoved": {
+    "message": "收藏已移除",
+    "description": "收藏移除消息"
+  },
+  "toggleProxyCmd": {
+    "message": "切换代理状态",
+    "description": "切换代理命令"
+  },
+  "optionsTitle": { "message": "Smart Proxy 设置" },
+  "optionsSubtitle": { "message": "配置您的代理设置" },
+  "basicSettings": { "message": "基本设置" },
+  "bypassListTitle": { "message": "代理白名单" },
+  "bypassListLabel": { "message": "绕过代理的主机（每行一个）" },
+  "tableName": { "message": "名称" },
+  "tableType": { "message": "类型" },
+  "tableHost": { "message": "主机" },
+  "tablePort": { "message": "端口" },
+  "tableUsername": { "message": "用户名" },
+  "tableActions": { "message": "操作" },
+  "noProxies": { "message": "尚未配置代理" },
+  "noFavorites": { "message": "暂无收藏" },
+  "languageLabel": { "message": "选择语言" },
+  "languageSettings": { "message": "语言设置" },
+  "importExportLabel": { "message": "导入/导出代理配置（JSON 格式）" },
+  "importExportPlaceholder": { "message": "在此粘贴 JSON 数据..." },
+  "importBtn": { "message": "导入" },
+  "exportBtn": { "message": "导出" },
+  "resetBtn": { "message": "全部重置" },
+  "saveBtn": { "message": "保存设置" },
+  "editProxy": { "message": "编辑代理" },
+  "proxyNamePlaceholder": { "message": "请输入代理名称" },
+  "proxyHostPlaceholder": { "message": "例如 127.0.0.1" },
+  "proxyPortPlaceholder": { "message": "例如 8080" },
+  "proxyUsernamePlaceholder": { "message": "请输入用户名" },
+  "proxyPasswordPlaceholder": { "message": "请输入密码" },
+  "cancelBtn": { "message": "取消" },
+  "saveProxyBtn": { "message": "保存" },
+  "editBtn": { "message": "编辑" },
+  "deleteBtn": { "message": "删除" },
+  "removeFavorite": { "message": "移除" },
+  "languageSaved": { "message": "语言设置已保存" },
+  "nameRequired": { "message": "代理名称为必填项" },
+  "hostRequired": { "message": "主机地址为必填项" },
+  "portInvalid": { "message": "端口号必须在 1 到 65535 之间" },
+  "proxySaved": { "message": "代理保存成功" },
+  "confirmDeleteProxy": { "message": "确定要删除此代理吗？" },
+  "confirmRemoveFavorite": { "message": "确定要移除此收藏吗？" },
+  "importEmpty": { "message": "请粘贴要导入的数据" },
+  "importFormatError": { "message": "数据格式无效，需要 JSON 数组格式的代理数据" },
+  "exportEmpty": { "message": "没有可导出的代理" },
+  "confirmReset": { "message": "此操作将删除所有设置和代理，是否继续？" },
+  "optionsSaved": { "message": "设置保存成功" },
+  "optionsReset": { "message": "所有设置已重置" },
+  "proxyMode": { "message": "代理模式", "description": "代理模式标签" },
+  "modePage": { "message": "页面", "description": "页面模式" },
+  "modeGlobal": { "message": "全局", "description": "全局模式" },
+  "modeSmart": { "message": "规则", "description": "规则模式" },
+  "refreshLatency": { "message": "点击刷新延迟", "description": "刷新延迟提示" },
+  "creditText": { "message": "特别感谢原作者：xubaifu97，如有侵权立即删除", "description": "致谢信息" },
+  "smartDomainsTitle": { "message": "规则代理域名" },
+  "smartDomainsLabel": { "message": "配置规则代理模式下的域名列表（每行一个，支持通配符 *.example.com）" },
+  "smartDomainsPlaceholder": { "message": "*.google.com\n*.youtube.com\n*.twitter.com" },
+  "pacScriptTitle": { "message": "PAC 脚本配置" },
+  "pacScriptLabel": { "message": "PAC 脚本（规则域名和收藏会自动同步，以注释标记的部分不可删除）" },
+  "syncedSmartDomains": { "message": "自动同步的规则域名" },
+  "syncedFavorites": { "message": "自动同步的收藏域名" },
+  "savePacScript": { "message": "保存 PAC 脚本" },
+  "pacSaved": { "message": "PAC 脚本保存成功" }
+}

@@ -1,0 +1,285 @@
+{
+  "extName": {
+    "message": "Smart Proxy",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Ein einfaches und effizientes Proxy-Verwaltungstool mit Latenztest und Website-Favoriten",
+    "description": "Extension description"
+  },
+  "status": {
+    "message": "Status",
+    "description": "Proxy status label"
+  },
+  "disconnected": {
+    "message": "Getrennt",
+    "description": "Disconnected status"
+  },
+  "latency": {
+    "message": "$MS$ ms",
+    "description": "Latency display with millisecond placeholder",
+    "placeholders": {
+      "ms": {
+        "content": "$1",
+        "example": "120"
+      }
+    }
+  },
+  "selectProxy": {
+    "message": "Proxy auswählen...",
+    "description": "Proxy selection placeholder"
+  },
+  "edit": {
+    "message": "Bearbeiten",
+    "description": "Edit button"
+  },
+  "delete": {
+    "message": "Löschen",
+    "description": "Delete button"
+  },
+  "favorite": {
+    "message": "Favorit",
+    "description": "Favorite button"
+  },
+  "addProxy": {
+    "message": "Proxy hinzufügen",
+    "description": "Add proxy button"
+  },
+  "help": {
+    "message": "Hilfe",
+    "description": "Help button"
+  },
+  "settings": {
+    "message": "Einstellungen",
+    "description": "Settings button"
+  },
+  "apply": {
+    "message": "Anwenden",
+    "description": "Apply button"
+  },
+  "cancel": {
+    "message": "Abbrechen",
+    "description": "Cancel button"
+  },
+  "save": {
+    "message": "Speichern",
+    "description": "Save button"
+  },
+  "reset": {
+    "message": "Zurücksetzen",
+    "description": "Reset button"
+  },
+  "confirm": {
+    "message": "Bestätigen",
+    "description": "Confirm button"
+  },
+  "proxyName": {
+    "message": "Proxy-Name",
+    "description": "Proxy name label"
+  },
+  "proxyType": {
+    "message": "Proxy-Typ",
+    "description": "Proxy type label"
+  },
+  "proxyHost": {
+    "message": "Host",
+    "description": "Proxy host label"
+  },
+  "proxyPort": {
+    "message": "Port",
+    "description": "Proxy port label"
+  },
+  "proxyUsername": {
+    "message": "Benutzername (optional)",
+    "description": "Proxy username label"
+  },
+  "proxyPassword": {
+    "message": "Passwort (optional)",
+    "description": "Proxy password label"
+  },
+  "startupRestore": {
+    "message": "Proxy beim Browserstart wiederherstellen",
+    "description": "Startup restore setting"
+  },
+  "quickSwitch": {
+    "message": "Schnellwechsel-Tastenkombination aktivieren (Ctrl+Shift+P)",
+    "description": "Quick switch shortcut setting"
+  },
+  "cascadeProxy": { "message": "Kaskaden-Proxy：Neue Tabs von proxyten Tabs werden auch automatisch geproxied" },
+  "bypassList": {
+    "message": "Umgehungsliste",
+    "description": "Bypass list label"
+  },
+  "bypassListPlaceholder": {
+    "message": "Hosts, die den Proxy umgehen (einer pro Zeile)",
+    "description": "Bypass list placeholder"
+  },
+  "proxyManagement": {
+    "message": "Proxy-Verwaltung",
+    "description": "Proxy management section"
+  },
+  "favoritesManagement": {
+    "message": "Favoritenverwaltung",
+    "description": "Favorites management section"
+  },
+  "languageSetting": {
+    "message": "Sprache",
+    "description": "Language setting"
+  },
+  "importExport": {
+    "message": "Importieren/Exportieren",
+    "description": "Import/Export section"
+  },
+  "import": {
+    "message": "Importieren",
+    "description": "Import button"
+  },
+  "export": {
+    "message": "Exportieren",
+    "description": "Export button"
+  },
+  "resetAll": {
+    "message": "Alles zurücksetzen",
+    "description": "Reset all button"
+  },
+  "saveSettings": {
+    "message": "Einstellungen speichern",
+    "description": "Save settings button"
+  },
+  "connected": {
+    "message": "Verbunden",
+    "description": "Connected status"
+  },
+  "standby": {
+    "message": "Bereit",
+    "description": "Bereit-Status"
+  },
+  "globalProxy": {
+    "message": "Globaler Proxy",
+    "description": "Global proxy mode"
+  },
+  "tabProxy": {
+    "message": "Tab-Proxy",
+    "description": "Tab proxy mode"
+  },
+  "deleteConfirm": {
+    "message": "Sind Sie sicher, dass Sie diesen Proxy löschen möchten?",
+    "description": "Delete confirmation message"
+  },
+  "favoriteConfirm": {
+    "message": "Proxy für diese Website merken? Beim nächsten Besuch wird er automatisch aktiviert.",
+    "description": "Favorite confirmation message"
+  },
+  "proxyAdded": {
+    "message": "Proxy erfolgreich hinzugefügt",
+    "description": "Proxy added success message"
+  },
+  "proxyUpdated": {
+    "message": "Proxy erfolgreich aktualisiert",
+    "description": "Proxy updated success message"
+  },
+  "proxyDeleted": {
+    "message": "Proxy erfolgreich gelöscht",
+    "description": "Proxy deleted success message"
+  },
+  "settingsSaved": {
+    "message": "Einstellungen gespeichert",
+    "description": "Settings saved message"
+  },
+  "settingsReset": {
+    "message": "Alle Einstellungen wurden zurückgesetzt",
+    "description": "Settings reset message"
+  },
+  "importSuccess": {
+    "message": "Import erfolgreich",
+    "description": "Import success message"
+  },
+  "importError": {
+    "message": "Import fehlgeschlagen: Ungültiges Datenformat",
+    "description": "Import error message"
+  },
+  "exportSuccess": {
+    "message": "Daten in das Textfeld exportiert",
+    "description": "Export success message"
+  },
+  "noProxy": {
+    "message": "Kein Proxy konfiguriert",
+    "description": "No proxy configured message"
+  },
+  "noFavorite": {
+    "message": "Keine Favoriten",
+    "description": "No favorites message"
+  },
+  "favoriteAdded": {
+    "message": "Website zu Favoriten hinzugefügt",
+    "description": "Favorite added message"
+  },
+  "favoriteRemoved": {
+    "message": "Favorit entfernt",
+    "description": "Favorite removed message"
+  },
+  "toggleProxyCmd": {
+    "message": "Proxy-Status umschalten",
+    "description": "Toggle proxy command"
+  },
+  "optionsTitle": { "message": "Smart Proxy Einstellungen" },
+  "optionsSubtitle": { "message": "Konfigurieren Sie Ihre Proxy-Einstellungen" },
+  "basicSettings": { "message": "Grundeinstellungen" },
+  "bypassListTitle": { "message": "Umgehungsliste" },
+  "bypassListLabel": { "message": "Hosts, die den Proxy umgehen (einer pro Zeile)" },
+  "tableName": { "message": "Name" },
+  "tableType": { "message": "Typ" },
+  "tableHost": { "message": "Host" },
+  "tablePort": { "message": "Port" },
+  "tableUsername": { "message": "Benutzername" },
+  "tableActions": { "message": "Aktionen" },
+  "noProxies": { "message": "Noch kein Proxy konfiguriert" },
+  "noFavorites": { "message": "Noch keine Favoriten" },
+  "languageLabel": { "message": "Sprache auswählen" },
+  "languageSettings": { "message": "Spracheinstellungen" },
+  "importExportLabel": { "message": "Proxy-Konfigurationen importieren/exportieren (JSON-Format)" },
+  "importExportPlaceholder": { "message": "JSON-Daten hier einfügen..." },
+  "importBtn": { "message": "Importieren" },
+  "exportBtn": { "message": "Exportieren" },
+  "resetBtn": { "message": "Alles zurücksetzen" },
+  "saveBtn": { "message": "Einstellungen speichern" },
+  "editProxy": { "message": "Proxy bearbeiten" },
+  "proxyNamePlaceholder": { "message": "Proxy-Name eingeben" },
+  "proxyHostPlaceholder": { "message": "z.B. 127.0.0.1" },
+  "proxyPortPlaceholder": { "message": "z.B. 8080" },
+  "proxyUsernamePlaceholder": { "message": "Benutzername eingeben" },
+  "proxyPasswordPlaceholder": { "message": "Passwort eingeben" },
+  "cancelBtn": { "message": "Abbrechen" },
+  "saveProxyBtn": { "message": "Speichern" },
+  "editBtn": { "message": "Bearbeiten" },
+  "deleteBtn": { "message": "Löschen" },
+  "removeFavorite": { "message": "Entfernen" },
+  "languageSaved": { "message": "Spracheinstellung gespeichert" },
+  "nameRequired": { "message": "Proxy-Name ist erforderlich" },
+  "hostRequired": { "message": "Host ist erforderlich" },
+  "portInvalid": { "message": "Port muss zwischen 1 und 65535 liegen" },
+  "proxySaved": { "message": "Proxy erfolgreich gespeichert" },
+  "confirmDeleteProxy": { "message": "Sind Sie sicher, dass Sie diesen Proxy löschen möchten?" },
+  "confirmRemoveFavorite": { "message": "Sind Sie sicher, dass Sie diesen Favoriten entfernen möchten?" },
+  "importEmpty": { "message": "Bitte fügen Sie die zu importierenden Daten ein" },
+  "importFormatError": { "message": "Ungültiges Datenformat. JSON-Array von Proxys erwartet." },
+  "exportEmpty": { "message": "Keine Proxys zum Exportieren" },
+  "confirmReset": { "message": "Dadurch werden alle Einstellungen und Proxys gelöscht. Fortfahren?" },
+  "optionsSaved": { "message": "Einstellungen erfolgreich gespeichert" },
+  "optionsReset": { "message": "Alle Einstellungen wurden zurückgesetzt" },
+  "proxyMode": { "message": "Proxy-Modus", "description": "Proxy mode label" },
+  "modePage": { "message": "Seite", "description": "Page mode" },
+  "modeGlobal": { "message": "Global", "description": "Global mode" },
+  "modeSmart": { "message": "Regel", "description": "Rule mode" },
+  "refreshLatency": { "message": "Klicken Sie, um die Latenz zu aktualisieren", "description": "Refresh latency tooltip" },
+  "creditText": { "message": "Besonderer Dank an den Originalautor: xubaifu97, wird bei Urheberrechtsverletzungen sofort entfernt", "description": "Credit text" },
+  "smartDomainsTitle": { "message": "Regel-Domains-Konfiguration" },
+  "smartDomainsLabel": { "message": "Regel-Proxy-Modus-Domainliste konfigurieren (eine pro Zeile, unterstützt Wildcards wie *.example.com)" },
+  "smartDomainsPlaceholder": { "message": "*.google.com\n*.youtube.com\n*.twitter.com" },
+  "pacScriptTitle": { "message": "PAC-Skript-Konfiguration" },
+  "pacScriptLabel": { "message": "PAC-Skript (Regel-Domains und Favoriten werden automatisch synchronisiert, mit Kommentaren markierte Teile können nicht gelöscht werden)" },
+  "syncedSmartDomains": { "message": "Automatisch synchronisierte Regel-Domains" },
+  "syncedFavorites": { "message": "Automatisch synchronisierte Favoriten-Domains" },
+  "savePacScript": { "message": "PAC-Skript speichern" },
+  "pacSaved": { "message": "PAC-Skript erfolgreich gespeichert" }
+}

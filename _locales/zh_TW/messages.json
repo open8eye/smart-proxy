@@ -1,0 +1,285 @@
+{
+  "extName": {
+    "message": "Smart Proxy",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "簡潔高效的代理管理工具，支援延遲測試和網站收藏",
+    "description": "Extension description"
+  },
+  "status": {
+    "message": "狀態",
+    "description": "Proxy status label"
+  },
+  "disconnected": {
+    "message": "未連線",
+    "description": "Disconnected status"
+  },
+  "latency": {
+    "message": "$MS$ 毫秒",
+    "description": "Latency display with millisecond placeholder",
+    "placeholders": {
+      "ms": {
+        "content": "$1",
+        "example": "120"
+      }
+    }
+  },
+  "selectProxy": {
+    "message": "選擇代理...",
+    "description": "Proxy selection placeholder"
+  },
+  "edit": {
+    "message": "編輯",
+    "description": "Edit button"
+  },
+  "delete": {
+    "message": "刪除",
+    "description": "Delete button"
+  },
+  "favorite": {
+    "message": "收藏",
+    "description": "Favorite button"
+  },
+  "addProxy": {
+    "message": "新增代理",
+    "description": "Add proxy button"
+  },
+  "help": {
+    "message": "說明",
+    "description": "Help button"
+  },
+  "settings": {
+    "message": "設定",
+    "description": "Settings button"
+  },
+  "apply": {
+    "message": "套用",
+    "description": "Apply button"
+  },
+  "cancel": {
+    "message": "取消",
+    "description": "Cancel button"
+  },
+  "save": {
+    "message": "儲存",
+    "description": "Save button"
+  },
+  "reset": {
+    "message": "重設",
+    "description": "Reset button"
+  },
+  "confirm": {
+    "message": "確認",
+    "description": "Confirm button"
+  },
+  "proxyName": {
+    "message": "代理名稱",
+    "description": "Proxy name label"
+  },
+  "proxyType": {
+    "message": "代理類型",
+    "description": "Proxy type label"
+  },
+  "proxyHost": {
+    "message": "主機位址",
+    "description": "Proxy host label"
+  },
+  "proxyPort": {
+    "message": "連接埠",
+    "description": "Proxy port label"
+  },
+  "proxyUsername": {
+    "message": "使用者名稱（選填）",
+    "description": "Proxy username label"
+  },
+  "proxyPassword": {
+    "message": "密碼（選填）",
+    "description": "Proxy password label"
+  },
+  "startupRestore": {
+    "message": "瀏覽器啟動時恢復代理設定",
+    "description": "Startup restore setting"
+  },
+  "quickSwitch": {
+    "message": "啟用快速切換快捷鍵 (Ctrl+Shift+P)",
+    "description": "Quick switch shortcut setting"
+  },
+  "cascadeProxy": { "message": "級聯代理：從代理標籤頁開啟的新標籤頁也自動代理" },
+  "bypassList": {
+    "message": "繞過清單",
+    "description": "Bypass list label"
+  },
+  "bypassListPlaceholder": {
+    "message": "繞過代理的主機（每行一個）",
+    "description": "Bypass list placeholder"
+  },
+  "proxyManagement": {
+    "message": "代理管理",
+    "description": "Proxy management section"
+  },
+  "favoritesManagement": {
+    "message": "收藏管理",
+    "description": "Favorites management section"
+  },
+  "languageSetting": {
+    "message": "語言",
+    "description": "Language setting"
+  },
+  "importExport": {
+    "message": "匯入/匯出",
+    "description": "Import/Export section"
+  },
+  "import": {
+    "message": "匯入",
+    "description": "Import button"
+  },
+  "export": {
+    "message": "匯出",
+    "description": "Export button"
+  },
+  "resetAll": {
+    "message": "全部重設",
+    "description": "Reset all button"
+  },
+  "saveSettings": {
+    "message": "儲存設定",
+    "description": "Save settings button"
+  },
+  "connected": {
+    "message": "已連線",
+    "description": "Connected status"
+  },
+  "standby": {
+    "message": "待機",
+    "description": "待機狀態"
+  },
+  "globalProxy": {
+    "message": "全域代理",
+    "description": "Global proxy mode"
+  },
+  "tabProxy": {
+    "message": "分頁代理",
+    "description": "Tab proxy mode"
+  },
+  "deleteConfirm": {
+    "message": "確定要刪除此代理嗎？",
+    "description": "Delete confirmation message"
+  },
+  "favoriteConfirm": {
+    "message": "為此網站記住代理設定？下次造訪將自動啟用。",
+    "description": "Favorite confirmation message"
+  },
+  "proxyAdded": {
+    "message": "代理新增成功",
+    "description": "Proxy added success message"
+  },
+  "proxyUpdated": {
+    "message": "代理更新成功",
+    "description": "Proxy updated success message"
+  },
+  "proxyDeleted": {
+    "message": "代理刪除成功",
+    "description": "Proxy deleted success message"
+  },
+  "settingsSaved": {
+    "message": "設定已儲存",
+    "description": "Settings saved message"
+  },
+  "settingsReset": {
+    "message": "所有設定已重設",
+    "description": "Settings reset message"
+  },
+  "importSuccess": {
+    "message": "匯入成功",
+    "description": "Import success message"
+  },
+  "importError": {
+    "message": "匯入失敗：資料格式無效",
+    "description": "Import error message"
+  },
+  "exportSuccess": {
+    "message": "資料已匯出至文字框",
+    "description": "Export success message"
+  },
+  "noProxy": {
+    "message": "未設定代理",
+    "description": "No proxy configured message"
+  },
+  "noFavorite": {
+    "message": "暫無收藏",
+    "description": "No favorites message"
+  },
+  "favoriteAdded": {
+    "message": "網站已收藏",
+    "description": "Favorite added message"
+  },
+  "favoriteRemoved": {
+    "message": "收藏已移除",
+    "description": "Favorite removed message"
+  },
+  "toggleProxyCmd": {
+    "message": "切換代理狀態",
+    "description": "Toggle proxy command"
+  },
+  "optionsTitle": { "message": "Smart Proxy 設定" },
+  "optionsSubtitle": { "message": "設定您的代理設定" },
+  "basicSettings": { "message": "基本設定" },
+  "bypassListTitle": { "message": "代理白名單" },
+  "bypassListLabel": { "message": "繞過代理的主機（每行一個）" },
+  "tableName": { "message": "名稱" },
+  "tableType": { "message": "類型" },
+  "tableHost": { "message": "主機" },
+  "tablePort": { "message": "連接埠" },
+  "tableUsername": { "message": "使用者名稱" },
+  "tableActions": { "message": "操作" },
+  "noProxies": { "message": "尚未設定代理" },
+  "noFavorites": { "message": "暫無收藏" },
+  "languageLabel": { "message": "選擇語言" },
+  "languageSettings": { "message": "語言設定" },
+  "importExportLabel": { "message": "匯入/匯出代理設定（JSON 格式）" },
+  "importExportPlaceholder": { "message": "在此貼上 JSON 資料..." },
+  "importBtn": { "message": "匯入" },
+  "exportBtn": { "message": "匯出" },
+  "resetBtn": { "message": "全部重設" },
+  "saveBtn": { "message": "儲存設定" },
+  "editProxy": { "message": "編輯代理" },
+  "proxyNamePlaceholder": { "message": "請輸入代理名稱" },
+  "proxyHostPlaceholder": { "message": "例如 127.0.0.1" },
+  "proxyPortPlaceholder": { "message": "例如 8080" },
+  "proxyUsernamePlaceholder": { "message": "請輸入使用者名稱" },
+  "proxyPasswordPlaceholder": { "message": "請輸入密碼" },
+  "cancelBtn": { "message": "取消" },
+  "saveProxyBtn": { "message": "儲存" },
+  "editBtn": { "message": "編輯" },
+  "deleteBtn": { "message": "刪除" },
+  "removeFavorite": { "message": "移除" },
+  "languageSaved": { "message": "語言設定已儲存" },
+  "nameRequired": { "message": "代理名稱為必填欄位" },
+  "hostRequired": { "message": "主機位址為必填欄位" },
+  "portInvalid": { "message": "連接埠號碼必須在 1 到 65535 之間" },
+  "proxySaved": { "message": "代理儲存成功" },
+  "confirmDeleteProxy": { "message": "確定要刪除此代理嗎？" },
+  "confirmRemoveFavorite": { "message": "確定要移除此收藏嗎？" },
+  "importEmpty": { "message": "請貼上要匯入的資料" },
+  "importFormatError": { "message": "資料格式無效，需要 JSON 陣列格式的代理資料" },
+  "exportEmpty": { "message": "沒有可匯出的代理" },
+  "confirmReset": { "message": "此操作將刪除所有設定和代理，是否繼續？" },
+  "optionsSaved": { "message": "設定儲存成功" },
+  "optionsReset": { "message": "所有設定已重設" },
+  "proxyMode": { "message": "代理模式", "description": "Proxy mode label" },
+  "modePage": { "message": "頁面", "description": "Page mode" },
+  "modeGlobal": { "message": "全域", "description": "Global mode" },
+  "modeSmart": { "message": "規則", "description": "Rule mode" },
+  "refreshLatency": { "message": "點擊重新整理延遲", "description": "Refresh latency tooltip" },
+  "creditText": { "message": "特別感謝原作者：xubaifu97，如有侵權立即刪除", "description": "Credit text" },
+  "smartDomainsTitle": { "message": "規則代理網域" },
+  "smartDomainsLabel": { "message": "設定規則代理模式下的網域清單（每行一個，支援萬用字元 *.example.com）" },
+  "smartDomainsPlaceholder": { "message": "*.google.com\n*.youtube.com\n*.twitter.com" },
+  "pacScriptTitle": { "message": "PAC 腳本設定" },
+  "pacScriptLabel": { "message": "PAC 腳本（規則網域和收藏會自動同步，以註解標記的部分不可刪除）" },
+  "syncedSmartDomains": { "message": "自動同步的規則網域" },
+  "syncedFavorites": { "message": "自動同步的收藏網域" },
+  "savePacScript": { "message": "儲存 PAC 腳本" },
+  "pacSaved": { "message": "PAC 腳本儲存成功" }
+}

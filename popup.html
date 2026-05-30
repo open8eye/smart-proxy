@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="title" data-i18n="extName">Smart Proxy</h1>
+      <div class="header-actions">
+        <button class="btn-icon" id="settingsBtn" data-i18n-title="settings" title="Settings">
+          <img src="icons/settings.png" alt="Settings" width="18" height="18">
+        </button>
+        <button class="btn-icon" id="helpBtn" data-i18n-title="help" title="Help">
+          <img src="icons/question-circle.png" alt="Help" width="18" height="18">
+        </button>
+      </div>
+    </header>
+
+    <div class="status-bar disconnected" id="statusBar">
+      <span class="status-label" data-i18n="status">Status</span>
+      <span class="status-latency" id="statusLatency" data-i18n-title="refreshLatency" title="Refresh latency">--</span>
+      <span class="status-value" id="statusValue" data-i18n="disconnected">Disconnected</span>
+    </div>
+
+    <div class="current-url-bar" id="currentUrlBar">
+      <span class="current-url-text" id="currentUrlText" title="">--</span>
+      <button class="btn-icon fav-btn" id="currentUrlFavBtn" title="Favorite">
+        <img src="icons/collection.png" alt="Favorite" width="16" height="16" id="currentUrlFavImg">
+      </button>
+    </div>
+
+    <div class="proxy-section">
+      <div class="proxy-row">
+        <select class="proxy-select" id="proxySelect" data-i18n-title="selectProxy" title="Select proxy">
+          <option value="" data-i18n="selectProxy">Select proxy...</option>
+        </select>
+        <label class="toggle-switch">
+          <input type="checkbox" id="proxyToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="action-buttons" id="actionButtons">
+      <button class="btn btn-secondary" id="editBtn" data-i18n="edit" data-i18n-title="edit" title="Edit">Edit</button>
+      <button class="btn btn-secondary" id="deleteBtn" data-i18n="delete" data-i18n-title="delete" title="Delete">Delete</button>
+      <select class="proxy-mode-select" id="proxyModeSelect" data-i18n-title="proxyMode" title="Proxy Mode">
+        <option value="page" data-i18n="modePage">Page</option>
+        <option value="global" data-i18n="modeGlobal">Global</option>
+        <option value="smart" data-i18n="modeSmart">Smart</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="addProxyBtn" data-i18n="addProxy" data-i18n-title="addProxy" title="Add Proxy">Add Proxy</button>
+
+    <div class="credit-line" data-i18n="creditText">特别感谢原作者：xubaifu97，如有侵权立即删除</div>
+  </div>
+
+  <div class="dialog-overlay" id="dialogOverlay">
+    <div class="dialog" id="dialog">
+      <div class="dialog-header">
+        <h2 class="dialog-title" id="dialogTitle"></h2>
+        <button class="dialog-close" id="dialogClose">&times;</button>
+      </div>
+      <div class="dialog-body">
+        <form id="proxyForm">
+          <div class="form-group">
+            <label for="proxyName" data-i18n="proxyName">Proxy Name</label>
+            <input type="text" id="proxyName" required>
+          </div>
+          <div class="form-group">
+            <label for="proxyType" data-i18n="proxyType">Proxy Type</label>
+            <select id="proxyType">
+              <option value="http">HTTP</option>
+              <option value="https">HTTPS</option>
+              <option value="socks4">SOCKS4</option>
+              <option value="socks5">SOCKS5</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="proxyHost" data-i18n="proxyHost">Host</label>
+            <input type="text" id="proxyHost" required>
+          </div>
+          <div class="form-group">
+            <label for="proxyPort" data-i18n="proxyPort">Port</label>
+            <input type="number" id="proxyPort" min="1" max="65535" required>
+          </div>
+          <div class="form-group">
+            <label for="proxyUsername" data-i18n="proxyUsername">Username</label>
+            <input type="text" id="proxyUsername">
+          </div>
+          <div class="form-group">
+            <label for="proxyPassword" data-i18n="proxyPassword">Password</label>
+            <input type="password" id="proxyPassword">
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" id="dialogCancel" data-i18n="cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="dialogSave" data-i18n="save">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

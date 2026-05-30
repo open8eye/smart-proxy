@@ -1,0 +1,285 @@
+{
+  "extName": {
+    "message": "Smart Proxy",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "シンプルで効率的なプロキシ管理ツール。遅延テストとウェブサイトお気に入り機能付き",
+    "description": "Extension description"
+  },
+  "status": {
+    "message": "ステータス",
+    "description": "Proxy status label"
+  },
+  "disconnected": {
+    "message": "未接続",
+    "description": "Disconnected status"
+  },
+  "latency": {
+    "message": "$MS$ ミリ秒",
+    "description": "Latency display with millisecond placeholder",
+    "placeholders": {
+      "ms": {
+        "content": "$1",
+        "example": "120"
+      }
+    }
+  },
+  "selectProxy": {
+    "message": "プロキシを選択...",
+    "description": "Proxy selection placeholder"
+  },
+  "edit": {
+    "message": "編集",
+    "description": "Edit button"
+  },
+  "delete": {
+    "message": "削除",
+    "description": "Delete button"
+  },
+  "favorite": {
+    "message": "お気に入り",
+    "description": "Favorite button"
+  },
+  "addProxy": {
+    "message": "プロキシを追加",
+    "description": "Add proxy button"
+  },
+  "help": {
+    "message": "ヘルプ",
+    "description": "Help button"
+  },
+  "settings": {
+    "message": "設定",
+    "description": "Settings button"
+  },
+  "apply": {
+    "message": "適用",
+    "description": "Apply button"
+  },
+  "cancel": {
+    "message": "キャンセル",
+    "description": "Cancel button"
+  },
+  "save": {
+    "message": "保存",
+    "description": "Save button"
+  },
+  "reset": {
+    "message": "リセット",
+    "description": "Reset button"
+  },
+  "confirm": {
+    "message": "確認",
+    "description": "Confirm button"
+  },
+  "proxyName": {
+    "message": "プロキシ名",
+    "description": "Proxy name label"
+  },
+  "proxyType": {
+    "message": "プロキシタイプ",
+    "description": "Proxy type label"
+  },
+  "proxyHost": {
+    "message": "ホスト",
+    "description": "Proxy host label"
+  },
+  "proxyPort": {
+    "message": "ポート",
+    "description": "Proxy port label"
+  },
+  "proxyUsername": {
+    "message": "ユーザー名（任意）",
+    "description": "Proxy username label"
+  },
+  "proxyPassword": {
+    "message": "パスワード（任意）",
+    "description": "Proxy password label"
+  },
+  "startupRestore": {
+    "message": "ブラウザ起動時にプロキシ設定を復元",
+    "description": "Startup restore setting"
+  },
+  "quickSwitch": {
+    "message": "クイック切換ショートカットを有効にする (Ctrl+Shift+P)",
+    "description": "Quick switch shortcut setting"
+  },
+  "cascadeProxy": { "message": "カスケードプロキシ：プロキシされたタブから開かれた新しいタブも自動的にプロキシ" },
+  "bypassList": {
+    "message": "バイパスリスト",
+    "description": "Bypass list label"
+  },
+  "bypassListPlaceholder": {
+    "message": "プロキシをバイパスするホスト（1行に1つ）",
+    "description": "Bypass list placeholder"
+  },
+  "proxyManagement": {
+    "message": "プロキシ管理",
+    "description": "Proxy management section"
+  },
+  "favoritesManagement": {
+    "message": "お気に入り管理",
+    "description": "Favorites management section"
+  },
+  "languageSetting": {
+    "message": "言語",
+    "description": "Language setting"
+  },
+  "importExport": {
+    "message": "インポート/エクスポート",
+    "description": "Import/Export section"
+  },
+  "import": {
+    "message": "インポート",
+    "description": "Import button"
+  },
+  "export": {
+    "message": "エクスポート",
+    "description": "Export button"
+  },
+  "resetAll": {
+    "message": "すべてリセット",
+    "description": "Reset all button"
+  },
+  "saveSettings": {
+    "message": "設定を保存",
+    "description": "Save settings button"
+  },
+  "connected": {
+    "message": "接続済み",
+    "description": "Connected status"
+  },
+  "standby": {
+    "message": "スタンバイ",
+    "description": "スタンバイ状態"
+  },
+  "globalProxy": {
+    "message": "グローバルプロキシ",
+    "description": "Global proxy mode"
+  },
+  "tabProxy": {
+    "message": "タブプロキシ",
+    "description": "Tab proxy mode"
+  },
+  "deleteConfirm": {
+    "message": "このプロキシを削除してもよろしいですか？",
+    "description": "Delete confirmation message"
+  },
+  "favoriteConfirm": {
+    "message": "このウェブサイトのプロキシ設定を記憶しますか？次回の訪問時に自動的に有効になります。",
+    "description": "Favorite confirmation message"
+  },
+  "proxyAdded": {
+    "message": "プロキシが正常に追加されました",
+    "description": "Proxy added success message"
+  },
+  "proxyUpdated": {
+    "message": "プロキシが正常に更新されました",
+    "description": "Proxy updated success message"
+  },
+  "proxyDeleted": {
+    "message": "プロキシが正常に削除されました",
+    "description": "Proxy deleted success message"
+  },
+  "settingsSaved": {
+    "message": "設定が保存されました",
+    "description": "Settings saved message"
+  },
+  "settingsReset": {
+    "message": "すべての設定がリセットされました",
+    "description": "Settings reset message"
+  },
+  "importSuccess": {
+    "message": "インポートが成功しました",
+    "description": "Import success message"
+  },
+  "importError": {
+    "message": "インポートに失敗しました：無効なデータ形式",
+    "description": "Import error message"
+  },
+  "exportSuccess": {
+    "message": "データがテキストボックスにエクスポートされました",
+    "description": "Export success message"
+  },
+  "noProxy": {
+    "message": "プロキシが設定されていません",
+    "description": "No proxy configured message"
+  },
+  "noFavorite": {
+    "message": "お気に入りはありません",
+    "description": "No favorites message"
+  },
+  "favoriteAdded": {
+    "message": "ウェブサイトがお気に入りに追加されました",
+    "description": "Favorite added message"
+  },
+  "favoriteRemoved": {
+    "message": "お気に入りから削除されました",
+    "description": "Favorite removed message"
+  },
+  "toggleProxyCmd": {
+    "message": "プロキシステータスの切り替え",
+    "description": "Toggle proxy command"
+  },
+  "optionsTitle": { "message": "Smart Proxy 設定" },
+  "optionsSubtitle": { "message": "プロキシ設定を構成する" },
+  "basicSettings": { "message": "基本設定" },
+  "bypassListTitle": { "message": "バイパスリスト" },
+  "bypassListLabel": { "message": "プロキシをバイパスするホスト（1行に1つ）" },
+  "tableName": { "message": "名前" },
+  "tableType": { "message": "タイプ" },
+  "tableHost": { "message": "ホスト" },
+  "tablePort": { "message": "ポート" },
+  "tableUsername": { "message": "ユーザー名" },
+  "tableActions": { "message": "操作" },
+  "noProxies": { "message": "プロキシがまだ設定されていません" },
+  "noFavorites": { "message": "お気に入りはまだありません" },
+  "languageLabel": { "message": "言語を選択" },
+  "languageSettings": { "message": "言語設定" },
+  "importExportLabel": { "message": "プロキシ設定のインポート/エクスポート（JSON 形式）" },
+  "importExportPlaceholder": { "message": "ここにJSONデータを貼り付けてください..." },
+  "importBtn": { "message": "インポート" },
+  "exportBtn": { "message": "エクスポート" },
+  "resetBtn": { "message": "すべてリセット" },
+  "saveBtn": { "message": "設定を保存" },
+  "editProxy": { "message": "プロキシを編集" },
+  "proxyNamePlaceholder": { "message": "プロキシ名を入力" },
+  "proxyHostPlaceholder": { "message": "例: 127.0.0.1" },
+  "proxyPortPlaceholder": { "message": "例: 8080" },
+  "proxyUsernamePlaceholder": { "message": "ユーザー名を入力" },
+  "proxyPasswordPlaceholder": { "message": "パスワードを入力" },
+  "cancelBtn": { "message": "キャンセル" },
+  "saveProxyBtn": { "message": "保存" },
+  "editBtn": { "message": "編集" },
+  "deleteBtn": { "message": "削除" },
+  "removeFavorite": { "message": "削除" },
+  "languageSaved": { "message": "言語設定が保存されました" },
+  "nameRequired": { "message": "プロキシ名は必須です" },
+  "hostRequired": { "message": "ホストは必須です" },
+  "portInvalid": { "message": "ポートは1から65535の間でなければなりません" },
+  "proxySaved": { "message": "プロキシが正常に保存されました" },
+  "confirmDeleteProxy": { "message": "このプロキシを削除してもよろしいですか？" },
+  "confirmRemoveFavorite": { "message": "このお気に入りを削除してもよろしいですか？" },
+  "importEmpty": { "message": "インポートするデータを貼り付けてください" },
+  "importFormatError": { "message": "データ形式が無効です。プロキシのJSON配列が必要です。" },
+  "exportEmpty": { "message": "エクスポートするプロキシがありません" },
+  "confirmReset": { "message": "すべての設定とプロキシが削除されます。続行しますか？" },
+  "optionsSaved": { "message": "設定が正常に保存されました" },
+  "optionsReset": { "message": "すべての設定がリセットされました" },
+  "proxyMode": { "message": "プロキシモード", "description": "Proxy mode label" },
+  "modePage": { "message": "ページ", "description": "Page mode" },
+  "modeGlobal": { "message": "グローバル", "description": "Global mode" },
+  "modeSmart": { "message": "ルール", "description": "Rule mode" },
+  "refreshLatency": { "message": "クリックして遅延を更新", "description": "Refresh latency tooltip" },
+  "creditText": { "message": "原作者：xubaifu97 に感謝します。著作権侵害の場合はすぐに削除します", "description": "Credit text" },
+  "smartDomainsTitle": { "message": "ルールドメイン設定" },
+  "smartDomainsLabel": { "message": "ルールプロキシモードのドメインリストを設定（1行に1つ、ワイルドカード *.example.com 対応）" },
+  "smartDomainsPlaceholder": { "message": "*.google.com\n*.youtube.com\n*.twitter.com" },
+  "pacScriptTitle": { "message": "PAC スクリプト設定" },
+  "pacScriptLabel": { "message": "PAC スクリプト（ルールドメインとお気に入りは自動同期、コメントでマークされた部分は削除不可）" },
+  "syncedSmartDomains": { "message": "自動同期されたルールドメイン" },
+  "syncedFavorites": { "message": "自動同期されたお気に入りドメイン" },
+  "savePacScript": { "message": "PAC スクリプトを保存" },
+  "pacSaved": { "message": "PAC スクリプトが保存されました" }
+}
