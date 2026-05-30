@@ -36,6 +36,43 @@
 - Windows/Linux: `Ctrl+Shift+P`
 - macOS: `Command+Shift+P`
 
+## 打包构建
+
+### 使用打包脚本
+
+```bash
+# 打包当前版本
+./build.sh
+
+# 打包指定版本
+./build.sh 1.0.1
+```
+
+打包后的文件会在 `dist/` 目录中生成。
+
+### 手动打包
+
+```bash
+zip -r smart-proxy.zip . \
+  -x "./build.sh" \
+  -x "./.gitignore" \
+  -x "./README.md" \
+  -x "./package.json" \
+  -x "./package-lock.json" \
+  -x "./babel.config.js" \
+  -x "./node_modules/*" \
+  -x "./tests/*" \
+  -x "./dist/*"
+```
+
+## 提交到Chrome网上应用店
+
+1. 注册 [Chrome网上应用店开发者账号](https://chrome.google.com/webstore/devconsole)（需支付 $5 USD）
+2. 登录 [Chrome开发者控制台](https://chrome.google.com/webstore/devconsole)
+3. 点击 "New Item" 上传打包好的 `.zip` 文件
+4. 填写扩展信息、截图、隐私政策等
+5. 提交审核（通常1-3个工作日）
+
 ## 项目结构
 
 ```
