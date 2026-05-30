@@ -4,8 +4,47 @@
 // ============================================================
 
 // --- 浏览器检测 ---
-var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined';
+var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined' && typeof browser.proxy.onRequest !== 'undefined';
 var firefoxProxyInfo = null;
+
+// --- 日志收集 ---
+var logBuffer = [];
+var LOG_MAX = 2000;
+
+function addLog(level, args) {
+  var now = new Date();
+  var ts = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0') + ':' +
+    String(now.getSeconds()).padStart(2, '0') + '.' +
+    String(now.getMilliseconds()).padStart(3, '0');
+  var msg = Array.prototype.map.call(args, function(a) {
+    return typeof a === 'object' ? JSON.stringify(a) : String(a);
+  }).join(' ');
+  logBuffer.push('[' + ts + '] [' + level + '] ' + msg);
+  if (logBuffer.length > LOG_MAX) {
+    logBuffer.splice(0, logBuffer.length - LOG_MAX);
+  }
+}
+
+var _origLog = console.log.bind(console);
+var _origWarn = console.warn.bind(console);
+var _origError = console.error.bind(console);
+
+console.log = function() {
+  addLog('INFO', arguments);
+  _origLog.apply(console, arguments);
+};
+console.warn = function() {
+  addLog('WARN', arguments);
+  _origWarn.apply(console, arguments);
+};
+console.error = function() {
+  addLog('ERROR', arguments);
+  _origError.apply(console, arguments);
+};
 
 // --- 图标动画状态 ---
 var iconAnimationTimer = null;  // 动画定时器
@@ -47,13 +86,14 @@ function getDefaultLanguage() {
 
 // 扩展安装或更新时触发，初始化默认配置
 chrome.runtime.onInstalled.addListener(function() {
+  console.log('[生命周期] 扩展已安装/更新，开始初始化');
   initializeExtension();
-  // 重新加载扩展时也恢复代理设置
   restoreProxySettings();
 });
 
 // 浏览器启动时触发，恢复上次的代理设置
 chrome.runtime.onStartup.addListener(function() {
+  console.log('[生命周期] 浏览器启动，恢复代理设置');
   restoreProxySettings();
 });
 
@@ -269,6 +309,7 @@ function getProxyConfig(proxy) {
 
 // 设置代理配置（内部函数，处理 Chrome/Firefox 差异）
 function setProxyConfig(proxy) {
+  console.log('[代理设置] 设置代理:', proxy.name, proxy.host + ':' + proxy.port);
   if (IS_FIREFOX) {
     firefoxProxyInfo = {
       type: proxy.type,
@@ -290,6 +331,7 @@ function setProxyConfig(proxy) {
 
 // 切换为直连模式（内部函数）
 function setDirectConnection() {
+  console.log('[代理设置] 切换为直连模式');
   if (IS_FIREFOX) {
     firefoxProxyInfo = null;
   } else {
@@ -299,12 +341,14 @@ function setDirectConnection() {
 
 // 应用代理：将代理设置写入代理 API，并启动图标动画
 function applyProxy(proxy) {
+  console.log('[代理操作] 应用代理:', proxy.name, proxy.host + ':' + proxy.port);
   setProxyConfig(proxy);
   startIconAnimation('on');
 }
 
 // 禁用代理：切换为直连模式，清除活跃代理 ID
 function disableProxy() {
+  console.log('[代理操作] 禁用代理，切换为直连');
   setDirectConnection();
   chrome.storage.local.set({ activeProxyId: null });
   startIconAnimation('off');
@@ -494,10 +538,17 @@ function testProxyLatency(proxy) {
 // 标签页事件监听
 // ============================================================
 
-// 标签页切换事件由定时任务统一处理，此处仅保留日志记录
+// 标签页切换时立即检测代理状态
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   var tabId = activeInfo.tabId;
   console.log('[标签页切换] 标签页=' + tabId);
+  chrome.storage.local.get(['proxyMode'], function(result) {
+    var mode = result.proxyMode || 'page';
+    if (mode !== 'global') {
+      setDirectConnection();
+    }
+    checkAllTabs();
+  });
 });
 
 // 域名匹配函数：检查 hostname 是否在域名列表中（支持通配符 *.example.com）
@@ -520,7 +571,7 @@ function isDomainInList(hostname, list) {
   return false;
 }
 
-// 监听标签页 URL 变化：仅用于日志记录，代理检测由定时任务统一处理
+// 监听标签页 URL 变化：日志记录 + 触发代理检测
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   var status = changeInfo.status || 'complete';
   var url = changeInfo.url || (status === 'loading' ? (tab.pendingUrl || tab.url) : null);
@@ -533,6 +584,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     } else {
       console.log('[URL更新] 标签页=' + tabId, '状态=loading', '网址=' + url);
     }
+    if (changeInfo.url) {
+      checkAllTabs();
+    }
   } else {
     console.log('[URL更新] 标签页=' + tabId, '状态=' + status, '网址=' + url);
   }
@@ -540,6 +594,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 // 监听标签页关闭：清理已关闭标签页的代理记录
 chrome.tabs.onRemoved.addListener(function(tabId) {
+  console.log('[标签页关闭] 标签页=' + tabId);
   chrome.storage.local.get(['tabProxies'], function(result) {
     var tabProxies = result.tabProxies || {};
     if (tabProxies[tabId]) {
@@ -549,31 +604,48 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
   });
 });
 
-// 监听新标签页创建：级联代理功能
-// 如果开启级联代理，从已代理标签页打开的新标签页也会自动代理
+function isManuallyCreatedNewTab(tab) {
+  return tab.pendingUrl === 'chrome://newtab/' ||
+         (tab.url === '' && !tab.pendingUrl && tab.status === 'loading');
+}
+
+// 监听新标签页创建：级联代理功能 + 立即调整代理状态
 chrome.tabs.onCreated.addListener(function(tab) {
-  if (!tab.openerTabId) return;  // 没有父标签页则跳过
-  chrome.storage.local.get(['options', 'tabProxies', 'proxies', 'proxyMode'], function(result) {
-    var options = result.options || {};
-    if (options.cascadeProxy === false) return;  // 级联代理已关闭
-    var mode = result.proxyMode || 'page';
-    if (mode === 'global') return;  // 全局模式下无需级联
+  console.log('[新标签页] 标签页=' + tab.id, 'openerTabId=' + (tab.openerTabId || '无'), tab);
+  if (tab.openerTabId) {
+    chrome.storage.local.get(['options', 'tabProxies', 'proxies'], function(result) {
+      var options = result.options || {};
+      if (options.cascadeProxy === false) {
+        console.log('[新标签页] 级联代理已关闭');
+        return;
+      }
 
-    // 检查父标签页是否有代理设置
-    var tabProxies = result.tabProxies || {};
-    var openerProxyId = tabProxies[tab.openerTabId];
-    if (!openerProxyId) return;  // 父标签页没有代理
+      var tabProxies = result.tabProxies || {};
+      var openerProxyId = tabProxies[tab.openerTabId];
+      if (!openerProxyId) {
+        console.log('[新标签页] 父标签页无代理，跳过级联');
+        return;
+      }
 
-    var proxies = result.proxies || [];
-    var proxy = proxies.find(function(p) { return p.id === openerProxyId; });
-    if (!proxy) return;
+      if (isManuallyCreatedNewTab(tab)) {
+        console.log('[新标签页] 手动新建的标签页，不级联代理');
+        return;
+      }
 
-    // 将父标签页的代理设置继承给新标签页
-    tabProxies[tab.id] = openerProxyId;
-    chrome.storage.local.set({ tabProxies: tabProxies });
-    applyProxy(proxy);
-    chrome.storage.local.set({ activeProxyId: openerProxyId });
-  });
+      var proxies = result.proxies || [];
+      var proxy = proxies.find(function(p) { return p.id === openerProxyId; });
+      if (!proxy) {
+        console.log('[新标签页] 找不到代理配置，跳过级联');
+        return;
+      }
+
+      console.log('[新标签页] 级联代理:', proxy.name, '从标签页', tab.openerTabId, '继承到', tab.id);
+      tabProxies[tab.id] = openerProxyId;
+      chrome.storage.local.set({ tabProxies: tabProxies }, function() {
+        checkAllTabs();
+      });
+    });
+  }
 });
 
 // ============================================================
@@ -584,15 +656,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   // 设置代理（来自 popup 的开关操作）
   if (message.action === 'setProxy') {
     var proxy = message.proxy;
+    console.log('[消息] 收到 setProxy:', proxy.name, proxy.host + ':' + proxy.port, '来源标签页:', sender.tab ? sender.tab.id : 'unknown');
     chrome.storage.local.set({ activeProxyId: proxy.id }, function() {
       applyProxy(proxy);
-      // 开启代理后刷新当前活动标签页，让代理立即生效
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         if (tabs.length > 0) {
           var tab = tabs[0];
-          // 如果标签页处于pending状态，使用tabs.update保持URL
+          console.log('[消息] setProxy 完成，刷新标签页:', tab.id, tab.url);
           if (tab.status === 'loading' && tab.pendingUrl) {
-            chrome.tabs.update(tab.id, { url: tab.pendingUrl });
+            chrome.tabs.update(tab.id, { url: tab.pendingUrl }).catch(function(){});
           } else if (tab.url && tab.url.indexOf('http') === 0) {
             chrome.tabs.reload(tab.id);
           }
@@ -605,6 +677,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
   // 禁用代理
   if (message.action === 'disableProxy') {
+    console.log('[消息] 收到 disableProxy，来源标签页:', sender.tab ? sender.tab.id : 'unknown');
     disableProxy();
     sendResponse({ success: true });
     return true;
@@ -633,6 +706,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
   // 添加收藏域名
   if (message.action === 'addFavorite') {
+    console.log('[消息] 添加收藏:', message.domain);
     chrome.storage.local.get(['favorites', 'activeProxyId', 'proxies'], function(result) {
       var favorites = result.favorites || [];
       if (!favorites.includes(message.domain)) {
@@ -656,6 +730,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
   // 移除收藏域名
   if (message.action === 'removeFavorite') {
+    console.log('[消息] 移除收藏:', message.domain);
     chrome.storage.local.get(['favorites'], function(result) {
       var favorites = (result.favorites || []).filter(function(f) { return f !== message.domain; });
       chrome.storage.local.set({ favorites: favorites }, function() {
@@ -691,7 +766,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 // 如果标签页处于pending状态，使用tabs.update保持URL
                 if (tab.status === 'loading' && tab.pendingUrl) {
                   console.log('[模式切换] 标签页pending中，重定向: ' + tab.pendingUrl);
-                  chrome.tabs.update(tab.id, { url: tab.pendingUrl });
+                  chrome.tabs.update(tab.id, { url: tab.pendingUrl }).catch(function(){});
                 } else if (tab.url && tab.url.indexOf('http') === 0) {
                   console.log('[模式切换] 刷新标签页: ' + tab.id);
                   chrome.tabs.reload(tab.id);
@@ -765,6 +840,20 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     sendResponse({ success: true });
     return true;
   }
+
+  // 获取日志
+  if (message.action === 'getLogs') {
+    sendResponse({ success: true, logs: logBuffer.join('\n') });
+    return true;
+  }
+
+  // 清理日志
+  if (message.action === 'clearLogs') {
+    logBuffer = [];
+    console.log('[日志] 日志已清理');
+    sendResponse({ success: true });
+    return true;
+  }
 });
 
 // ============================================================
@@ -773,17 +862,23 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
 // 监听快捷键命令：快速切换代理开关
 chrome.commands.onCommand.addListener(function(command) {
+  console.log('[快捷键] 命令:', command);
   if (command === 'toggle-proxy') {
     chrome.storage.local.get(['options', 'proxies', 'activeProxyId'], function(data) {
       var options = data.options || {};
-      if (!options.quickSwitch) return;  // 未开启快捷键切换
+      if (!options.quickSwitch) {
+        console.log('[快捷键] 快速切换未开启，忽略');
+        return;
+      }
 
       if (data.activeProxyId) {
-        disableProxy();  // 已有代理则关闭
+        console.log('[快捷键] 当前有代理，执行禁用');
+        disableProxy();
       } else if (data.proxies && data.proxies.length > 0) {
         var proxy = data.proxies[0];
+        console.log('[快捷键] 当前无代理，开启第一个:', proxy.name);
         chrome.storage.local.set({ activeProxyId: proxy.id }, function() {
-          applyProxy(proxy);  // 无代理则开启第一个
+          applyProxy(proxy);
         });
       }
     });
@@ -860,7 +955,7 @@ function checkAllTabs() {
               // pending状态下重定向到代理
               if (tab.status === 'loading' && pendingUrl) {
                 console.log('[定时检测] 已有代理的标签页pending中，重定向到代理: ' + pendingUrl);
-                chrome.tabs.update(tabId, { url: pendingUrl });
+                chrome.tabs.update(tabId, { url: pendingUrl }).catch(function(){});
               }
             }
           }
@@ -909,7 +1004,7 @@ function checkAllTabs() {
             if (tab.status === 'loading' && pendingUrl) {
               // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求
               console.log('[定时检测] 页面pending中，重定向到代理: ' + pendingUrl);
-              chrome.tabs.update(tabId, { url: pendingUrl });
+              chrome.tabs.update(tabId, { url: pendingUrl }).catch(function(){});
             } else if (tab.status === 'complete') {
               // 页面加载完成，reload让代理生效
               console.log('[定时检测] 页面加载完成，重新加载让代理生效');

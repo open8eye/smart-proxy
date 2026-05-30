@@ -1,74 +1,108 @@
 #!/bin/bash
 
-# Chrome Extension Build Script
+# Smart Proxy Build Script - Chrome & Firefox
 # Usage: ./build.sh [version]
 
 set -e
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Get project directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_NAME="smart-proxy"
 OUTPUT_DIR="$SCRIPT_DIR/dist"
+BUILD_DIR="$SCRIPT_DIR/.build-tmp"
 
-echo -e "${GREEN}=== Chrome Extension Build Script ===${NC}"
-echo ""
-
-# Create output directory
 mkdir -p "$OUTPUT_DIR"
 
-# Get version from manifest.json
+# Auto-restore Chrome manifest if dev-firefox was active
+CHROME_MANIFEST="$SCRIPT_DIR/manifest.chrome.json"
+if [ -f "$CHROME_MANIFEST" ]; then
+    echo -e "${YELLOW}检测到 Firefox 调试模式，自动恢复 Chrome manifest...${NC}"
+    mv "$CHROME_MANIFEST" "$SCRIPT_DIR/manifest.json"
+fi
+
 VERSION=$(grep -o '"version": *"[^"]*"' "$SCRIPT_DIR/manifest.json" | cut -d'"' -f4)
 if [ -n "$1" ]; then
     VERSION="$1"
 fi
 
+echo -e "${GREEN}=== Smart Proxy Build Script ===${NC}"
 echo -e "${YELLOW}Version: $VERSION${NC}"
+echo ""
 
-# Output file
-OUTPUT_FILE="$OUTPUT_DIR/${PROJECT_NAME}-v${VERSION}.zip"
+# ---- Chrome ----
+echo -e "${GREEN}[1/2] Building Chrome extension...${NC}"
 
-# Remove old build if exists
-if [ -f "$OUTPUT_FILE" ]; then
-    rm "$OUTPUT_FILE"
-    echo -e "${YELLOW}Removed old build: $OUTPUT_FILE${NC}"
-fi
+CHROME_FILE="$OUTPUT_DIR/${PROJECT_NAME}-chrome-v${VERSION}.zip"
+[ -f "$CHROME_FILE" ] && rm "$CHROME_FILE"
 
-# Create zip file
-echo -e "${GREEN}Creating zip file...${NC}"
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+rsync -a \
+    --exclude='build.sh' \
+    --exclude='build-firefox.sh' \
+    --exclude='dev-firefox.sh' \
+    --exclude='.gitignore' \
+    --exclude='README.md' \
+    --exclude='manifest.firefox.json' \
+    --exclude='package.json' \
+    --exclude='package-lock.json' \
+    --exclude='babel.config.js' \
+    --exclude='node_modules' \
+    --exclude='tests' \
+    --exclude='dist' \
+    --exclude='.*' \
+    --exclude='.build-tmp' \
+    ./ "$BUILD_DIR/"
+
+cd "$BUILD_DIR"
+zip -r "$CHROME_FILE" . -x ".*" > /dev/null
 cd "$SCRIPT_DIR"
-zip -r "$OUTPUT_FILE" \
-    . \
-    -x "./build.sh" \
-    -x "./build-firefox.sh" \
-    -x "./.gitignore" \
-    -x "./README.md" \
-    -x "./manifest.firefox.json" \
-    -x "./package.json" \
-    -x "./package-lock.json" \
-    -x "./babel.config.js" \
-    -x "./node_modules/*" \
-    -x "./tests/*" \
-    -x "./dist/*" \
-    -x "./.*" \
-    -x "*/node_modules/*" \
-    -x "*/.*"
+rm -rf "$BUILD_DIR"
 
-# Get file size
-FILE_SIZE=$(du -h "$OUTPUT_FILE" | cut -f1)
+CHROME_SIZE=$(du -h "$CHROME_FILE" | cut -f1)
+echo -e "  Output: ${YELLOW}$CHROME_FILE${NC} (${CHROME_SIZE})"
+
+# ---- Firefox ----
+echo -e "${GREEN}[2/2] Building Firefox extension...${NC}"
+
+FIREFOX_FILE="$OUTPUT_DIR/${PROJECT_NAME}-firefox-v${VERSION}.zip"
+[ -f "$FIREFOX_FILE" ] && rm "$FIREFOX_FILE"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+rsync -a \
+    --exclude='build.sh' \
+    --exclude='build-firefox.sh' \
+    --exclude='dev-firefox.sh' \
+    --exclude='.gitignore' \
+    --exclude='README.md' \
+    --exclude='manifest.json' \
+    --exclude='manifest.firefox.json' \
+    --exclude='package.json' \
+    --exclude='package-lock.json' \
+    --exclude='babel.config.js' \
+    --exclude='node_modules' \
+    --exclude='tests' \
+    --exclude='dist' \
+    --exclude='.*' \
+    --exclude='.build-tmp' \
+    ./ "$BUILD_DIR/"
+
+cp "$SCRIPT_DIR/manifest.firefox.json" "$BUILD_DIR/manifest.json"
+
+cd "$BUILD_DIR"
+zip -r "$FIREFOX_FILE" . -x ".*" > /dev/null
+cd "$SCRIPT_DIR"
+rm -rf "$BUILD_DIR"
+
+FIREFOX_SIZE=$(du -h "$FIREFOX_FILE" | cut -f1)
+echo -e "  Output: ${YELLOW}$FIREFOX_FILE${NC} (${FIREFOX_SIZE})"
 
 echo ""
 echo -e "${GREEN}=== Build Complete ===${NC}"
-echo -e "${GREEN}Output: $OUTPUT_FILE${NC}"
-echo -e "${GREEN}Size: $FILE_SIZE${NC}"
-echo ""
-echo -e "${YELLOW}Next steps:${NC}"
-echo "1. Go to chrome://extensions/"
-echo "2. Enable Developer mode"
-echo "3. Click 'Load unpacked' to test"
-echo "4. Upload $OUTPUT_FILE to Chrome Web Store"
+echo -e "Chrome:  ${YELLOW}$CHROME_FILE${NC} (${CHROME_SIZE})"
+echo -e "Firefox: ${YELLOW}$FIREFOX_FILE${NC} (${FIREFOX_SIZE})"

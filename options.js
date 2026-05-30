@@ -3,7 +3,7 @@
 // 职责：代理管理、收藏管理、智能域名管理、设置保存/导入导出
 // ============================================================
 
-var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined';
+var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'undefined' && typeof browser.proxy.onRequest !== 'undefined';
 
 // 禁用代理（兼容 Chrome 和 Firefox）
 function disableProxySettings(callback) {
@@ -187,6 +187,10 @@ function bindEvents() {
       if (tabId === 'statistics') {
         loadStatistics();
       }
+      // 如果切换到日志页面，加载日志
+      if (tabId === 'logs') {
+        loadLogs();
+      }
     });
   });
 
@@ -210,6 +214,24 @@ function bindEvents() {
         showStatus(getMessage('statsCleared') || '统计数据已清除', 'success');
       });
     }
+  });
+
+  // 日志页面事件
+  document.getElementById('refresh-log-btn').addEventListener('click', function() {
+    loadLogs();
+  });
+
+  document.getElementById('clear-log-btn').addEventListener('click', function() {
+    if (confirm(getMessage('confirmClearLog') || '确定要清除所有日志吗？')) {
+      chrome.runtime.sendMessage({ action: 'clearLogs' }, function() {
+        loadLogs();
+        showStatus(getMessage('logCleared') || '日志已清除', 'success');
+      });
+    }
+  });
+
+  document.getElementById('export-log-btn-tab').addEventListener('click', function() {
+    exportLogs();
   });
 }
 
@@ -674,6 +696,27 @@ function importData() {
   }
 }
 
+// 导出运行日志
+function exportLogs() {
+  chrome.runtime.sendMessage({ action: 'getLogs' }, function(response) {
+    if (response && response.success) {
+      var blob = new Blob([response.logs], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      var now = new Date();
+      var ts = now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') + '_' +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0');
+      a.href = url;
+      a.download = 'smart-proxy-log-' + ts + '.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  });
+}
+
 // 导出代理配置（JSON 格式）
 function exportData() {
   chrome.storage.local.get(['proxies'], function(result) {
@@ -757,6 +800,19 @@ function formatTime(ms) {
   if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
   if (ms < 3600000) return (ms / 60000).toFixed(1) + 'min';
   return (ms / 3600000).toFixed(1) + 'h';
+}
+
+// 加载日志
+function loadLogs() {
+  chrome.runtime.sendMessage({ action: 'getLogs' }, function(response) {
+    var logContent = document.getElementById('log-content');
+    if (response && response.success && response.logs) {
+      logContent.textContent = response.logs;
+      logContent.parentElement.scrollTop = logContent.parentElement.scrollHeight;
+    } else {
+      logContent.textContent = getMessage('noLogs') || '暂无日志';
+    }
+  });
 }
 
 // 加载统计数据
