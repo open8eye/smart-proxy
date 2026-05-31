@@ -2,6 +2,11 @@
 
 一款功能强大的浏览器代理管理扩展，帮助您高效管理代理配置。
 
+## 仓库地址
+
+- GitHub: https://github.com/open8eye/smart-proxy
+- Gitee（码云）: https://gitee.com/lulendi/smart-proxy
+
 ## 主要功能
 
 - **快速切换代理**：一键切换不同的代理服务器
