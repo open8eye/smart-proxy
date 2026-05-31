@@ -115,4 +115,8 @@ smart-proxy/
 
 ## 许可证
 
+本项目基于 [MIT License](LICENSE) 开源。
+
+## 声明
+
 本项目基于原作者 [xubaifu97](https://github.com/xubaifu97) 的 [Easy Proxy Switcher](https://chromewebstore.google.com/detail/fjnpcbjdpbhbdlnkncaoennjdkoegmof) 扩展进行优化改进。
