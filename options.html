@@ -296,6 +296,33 @@
     </div>
   </div>
 
+  <div id="edit-fav-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 data-i18n="editFavoriteScope"></h3>
+        <button class="modal-close" id="fav-modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-fav-domain">
+        <div class="fav-scope-options">
+          <label class="radio-item">
+            <input type="radio" name="fav-scope" value="all" id="fav-scope-all">
+            <span data-i18n="scopeAllProxies"></span>
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="fav-scope" value="specific" id="fav-scope-specific">
+            <span data-i18n="scopeCurrentProxy"></span>
+          </label>
+        </div>
+        <div class="fav-proxy-checkboxes" id="fav-proxy-checkboxes"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-fav-edit-btn" class="btn btn-secondary" data-i18n="cancelBtn"></button>
+        <button id="save-fav-edit-btn" class="btn btn-primary" data-i18n="saveBtn"></button>
+      </div>
+    </div>
+  </div>
+
   <script src="options.js"></script>
 </body>
 </html>

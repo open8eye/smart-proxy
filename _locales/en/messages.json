@@ -322,5 +322,12 @@
   "refreshStats": { "message": "Refresh", "description": "Refresh statistics button" },
   "clearStats": { "message": "Clear", "description": "Clear statistics button" },
   "confirmClearStats": { "message": "Are you sure you want to clear all statistics data?", "description": "Confirm clear stats prompt" },
-  "statsCleared": { "message": "Statistics data cleared", "description": "Stats cleared message" }
+  "statsCleared": { "message": "Statistics data cleared", "description": "Stats cleared message" },
+  "scopeAllProxies": { "message": "All Proxies", "description": "Favorite scope: all proxies" },
+  "scopeCurrentProxy": { "message": "Current Proxy Only", "description": "Favorite scope: current proxy only" },
+  "scopeSpecificProxies": { "message": "Specific Proxies", "description": "Favorite scope: specific proxies" },
+  "editFavoriteScope": { "message": "Edit Favorite Scope", "description": "Edit favorite scope modal title" },
+  "editFavorite": { "message": "Edit Favorite", "description": "Edit favorite button tooltip" },
+  "selectAtLeastOneProxy": { "message": "Please select at least one proxy", "description": "Error when no proxy selected" },
+  "favoriteScopeUpdated": { "message": "Favorite scope updated", "description": "Favorite scope update success message" }
 }

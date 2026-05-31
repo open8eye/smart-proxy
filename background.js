@@ -253,6 +253,11 @@ function initializeExtension() {
     }
     if (!result.favorites) {
       chrome.storage.local.set({ favorites: [] });
+    } else {
+      var migrated = migrateFavorites(result.favorites);
+      if (migrated !== result.favorites) {
+        chrome.storage.local.set({ favorites: migrated });
+      }
     }
     if (!result.options) {
       chrome.storage.local.set({
@@ -581,16 +586,59 @@ function isDomainInList(hostname, list) {
     var item = list[i].toLowerCase().trim();
     if (!item) continue;
     if (item.indexOf('*.') === 0) {
-      // 通配符匹配：*.example.com 匹配 sub.example.com
       var base = item.substring(2);
       if (hostNoWww === base || hostNoWww.endsWith('.' + base)) return true;
     } else {
-      // 精确匹配：example.com 匹配 www.example.com
       var itemNoWww = item.indexOf('www.') === 0 ? item.substring(4) : item;
       if (hostNoWww === itemNoWww || hostNoWww.endsWith('.' + itemNoWww)) return true;
     }
   }
   return false;
+}
+
+// 从收藏列表中提取纯域名字符串（兼容旧格式和新格式）
+function extractFavoriteDomains(favorites) {
+  if (!favorites || favorites.length === 0) return [];
+  if (typeof favorites[0] === 'string') return favorites;
+  return favorites.map(function(f) { return f.domain; });
+}
+
+// 将旧格式收藏迁移为新格式
+function migrateFavorites(favorites) {
+  if (!favorites || favorites.length === 0) return [];
+  if (typeof favorites[0] === 'object') return favorites;
+  return favorites.map(function(domain) {
+    return { domain: domain, scope: 'all', proxyIds: [] };
+  });
+}
+
+// 在收藏列表中查找匹配域名的收藏项，返回匹配项的完整对象
+function findFavoriteByDomain(favorites, hostname) {
+  var host = hostname.toLowerCase();
+  var hostNoWww = host.indexOf('www.') === 0 ? host.substring(4) : host;
+  for (var i = 0; i < favorites.length; i++) {
+    var fav = favorites[i];
+    var domain = (typeof fav === 'string' ? fav : fav.domain).toLowerCase().trim();
+    if (!domain) continue;
+    if (domain.indexOf('*.') === 0) {
+      var base = domain.substring(2);
+      if (hostNoWww === base || hostNoWww.endsWith('.' + base)) return fav;
+    } else {
+      var domainNoWww = domain.indexOf('www.') === 0 ? domain.substring(4) : domain;
+      if (hostNoWww === domainNoWww || hostNoWww.endsWith('.' + domainNoWww)) return fav;
+    }
+  }
+  return null;
+}
+
+// 检查收藏项是否适用于指定代理
+function isFavoriteForProxy(fav, proxyId) {
+  if (typeof fav === 'string') return true;
+  if (fav.scope === 'all') return true;
+  if (fav.scope === 'specific' && Array.isArray(fav.proxyIds)) {
+    return fav.proxyIds.indexOf(proxyId) !== -1;
+  }
+  return true;
 }
 
 // 监听标签页 URL 变化：日志记录 + 触发代理检测
@@ -742,13 +790,18 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
   // 添加收藏域名
   if (message.action === 'addFavorite') {
-    console.log('[消息] 添加收藏:', message.domain);
+    console.log('[消息] 添加收藏:', message.domain, 'scope:', message.scope);
     chrome.storage.local.get(['favorites', 'activeProxyId', 'proxies'], function(result) {
-      var favorites = result.favorites || [];
-      if (!favorites.includes(message.domain)) {
-        favorites.push(message.domain);
+      var favorites = migrateFavorites(result.favorites || []);
+      var exists = favorites.some(function(f) { return f.domain === message.domain; });
+      if (!exists) {
+        var newFav = {
+          domain: message.domain,
+          scope: message.scope || 'all',
+          proxyIds: message.proxyIds || []
+        };
+        favorites.push(newFav);
         chrome.storage.local.set({ favorites: favorites }, function() {
-          // 收藏添加后，如果有活跃代理则重新应用
           if (result.activeProxyId && result.proxies) {
             var proxy = result.proxies.find(function(p) { return p.id === result.activeProxyId; });
             if (proxy) {
@@ -768,7 +821,10 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.action === 'removeFavorite') {
     console.log('[消息] 移除收藏:', message.domain);
     chrome.storage.local.get(['favorites'], function(result) {
-      var favorites = (result.favorites || []).filter(function(f) { return f !== message.domain; });
+      var favorites = (result.favorites || []).filter(function(f) {
+        var domain = typeof f === 'string' ? f : f.domain;
+        return domain !== message.domain;
+      });
       chrome.storage.local.set({ favorites: favorites }, function() {
         sendResponse({ success: true });
       });
@@ -780,7 +836,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.action === 'isFavorite') {
     chrome.storage.local.get(['favorites'], function(result) {
       var favorites = result.favorites || [];
-      sendResponse({ success: true, isFavorite: favorites.includes(message.domain) });
+      var domains = extractFavoriteDomains(favorites);
+      sendResponse({ success: true, isFavorite: domains.indexOf(message.domain) !== -1 });
     });
     return true;
   }
@@ -1024,7 +1081,8 @@ function checkAllTabs() {
           if (!hostname || hostname.indexOf('.') === -1) continue;
 
           // 检查域名是否匹配收藏列表或智能域名列表
-          var inFav = favoriteQuickProxy && isDomainInList(hostname, favorites);
+          var matchedFav = favoriteQuickProxy ? findFavoriteByDomain(favorites, hostname) : null;
+          var inFav = !!matchedFav;
           var inSmart = mode === 'smart' && isDomainInList(hostname, smartDomains);
 
           console.log('[定时检测] 标签页=' + tabId, '主机名=' + hostname, '收藏=' + inFav, '规则=' + inSmart);
@@ -1035,13 +1093,47 @@ function checkAllTabs() {
           var proxyId = activeProxyId;
           var proxy = null;
 
-          if (proxyId) {
-            proxy = proxies.find(function(p) { return p.id === proxyId; });
+          // 如果是收藏匹配，检查收藏范围并确定代理
+          if (inFav && matchedFav && typeof matchedFav === 'object' && matchedFav.scope === 'specific') {
+            var favProxyIds = matchedFav.proxyIds || [];
+            if (favProxyIds.length > 0) {
+              // 优先使用收藏指定的代理中当前活跃的
+              if (proxyId && favProxyIds.indexOf(proxyId) !== -1) {
+                proxy = proxies.find(function(p) { return p.id === proxyId; });
+              }
+              // 否则使用收藏指定的第一个可用代理
+              if (!proxy) {
+                for (var pi = 0; pi < favProxyIds.length; pi++) {
+                  var found = proxies.find(function(p) { return p.id === favProxyIds[pi]; });
+                  if (found) { proxy = found; proxyId = found.id; break; }
+                }
+              }
+              // 收藏指定的代理都不可用，跳过
+              if (!proxy) {
+                console.log('[定时检测] 标签页=' + tabId, '收藏指定了代理但不可用，跳过');
+                continue;
+              }
+            } else {
+              // scope=specific 但 proxyIds 为空，退回到默认行为
+              if (proxyId) {
+                proxy = proxies.find(function(p) { return p.id === proxyId; });
+              }
+              if (!proxy && proxies.length > 0) {
+                proxy = proxies[0];
+                proxyId = proxy.id;
+              }
+            }
+          } else {
+            // scope=all 或智能域名：使用当前活跃代理或第一个代理
+            if (proxyId) {
+              proxy = proxies.find(function(p) { return p.id === proxyId; });
+            }
+            if (!proxy && proxies.length > 0) {
+              proxy = proxies[0];
+              proxyId = proxy.id;
+            }
           }
-          if (!proxy && proxies.length > 0) {
-            proxy = proxies[0];
-            proxyId = proxy.id;
-          }
+
           if (!proxy) {
             console.log('[定时检测] 标签页=' + tabId, '匹配成功但无可用代理');
             continue;
@@ -1132,6 +1224,10 @@ if (typeof module !== 'undefined' && module.exports) {
     checkAllTabs: checkAllTabs,
     startPendingCheck: startPendingCheck,
     stopPendingCheck: stopPendingCheck,
-    IS_FIREFOX: IS_FIREFOX
+    IS_FIREFOX: IS_FIREFOX,
+    extractFavoriteDomains: extractFavoriteDomains,
+    migrateFavorites: migrateFavorites,
+    findFavoriteByDomain: findFavoriteByDomain,
+    isFavoriteForProxy: isFavoriteForProxy
   };
 }

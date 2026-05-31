@@ -21,27 +21,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // DOM 元素引用
   // ============================================================
   const elements = {
-    statusBar: document.getElementById('statusBar'),           // 状态栏容器
-    statusValue: document.getElementById('statusValue'),       // 状态文字（已连接/待机/断开）
-    statusLatency: document.getElementById('statusLatency'),   // 延迟显示
-    proxySelect: document.getElementById('proxySelect'),       // 代理服务器下拉框
-    proxyToggle: document.getElementById('proxyToggle'),       // 代理开关
-    proxyModeSelect: document.getElementById('proxyModeSelect'), // 代理模式选择（页面/全局/智能）
+    statusBar: document.getElementById('statusBar'),
+    statusValue: document.getElementById('statusValue'),
+    statusLatency: document.getElementById('statusLatency'),
+    proxySelect: document.getElementById('proxySelect'),
+    proxyToggle: document.getElementById('proxyToggle'),
+    proxyModeSelect: document.getElementById('proxyModeSelect'),
     actionButtons: document.getElementById('actionButtons'),
-    editBtn: document.getElementById('editBtn'),               // 编辑按钮
-    deleteBtn: document.getElementById('deleteBtn'),           // 删除按钮
-    currentUrlText: document.getElementById('currentUrlText'), // 当前页面域名显示
-    currentUrlFavBtn: document.getElementById('currentUrlFavBtn'), // 收藏按钮
-    currentUrlFavImg: document.getElementById('currentUrlFavImg'), // 收藏图标
-    addProxyBtn: document.getElementById('addProxyBtn'),       // 添加代理按钮
-    settingsBtn: document.getElementById('settingsBtn'),       // 设置按钮
-    helpBtn: document.getElementById('helpBtn'),               // 帮助按钮
-    dialogOverlay: document.getElementById('dialogOverlay'),   // 弹窗遮罩
+    editBtn: document.getElementById('editBtn'),
+    deleteBtn: document.getElementById('deleteBtn'),
+    currentUrlText: document.getElementById('currentUrlText'),
+    currentUrlFavBtn: document.getElementById('currentUrlFavBtn'),
+    currentUrlFavImg: document.getElementById('currentUrlFavImg'),
+    favScopeDropdown: document.getElementById('favScopeDropdown'),
+    favScopeAll: document.getElementById('favScopeAll'),
+    favScopeCurrent: document.getElementById('favScopeCurrent'),
+    addProxyBtn: document.getElementById('addProxyBtn'),
+    settingsBtn: document.getElementById('settingsBtn'),
+    helpBtn: document.getElementById('helpBtn'),
+    dialogOverlay: document.getElementById('dialogOverlay'),
     dialog: document.getElementById('dialog'),
     dialogTitle: document.getElementById('dialogTitle'),
     dialogClose: document.getElementById('dialogClose'),
     dialogCancel: document.getElementById('dialogCancel'),
-    proxyForm: document.getElementById('proxyForm'),           // 代理表单
+    proxyForm: document.getElementById('proxyForm'),
     proxyName: document.getElementById('proxyName'),
     proxyType: document.getElementById('proxyType'),
     proxyHost: document.getElementById('proxyHost'),
@@ -173,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeProxyId = storageResult.activeProxyId || null;
         tabExplicitlyProxied = false;
       }
-      currentTabProxied = tabExplicitlyProxied || (currentTabHostname ? isDomainInList(currentTabHostname, favoritesList) : false);
+      currentTabProxied = tabExplicitlyProxied || (currentTabHostname ? isDomainFavorited(currentTabHostname) : false);
       if (!currentTabProxied && proxyMode === 'smart') {
         currentTabProxied = currentTabHostname ? isDomainInList(currentTabHostname, smartDomains) : false;
       }
@@ -307,17 +310,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const host = hostname.toLowerCase();
     const hostNoWww = host.startsWith('www.') ? host.substring(4) : host;
     for (const fav of favoritesList) {
-      const f = fav.toLowerCase().trim();
-      if (!f) continue;
-      if (f.startsWith('*.')) {
-        const base = f.substring(2);
+      const domain = (typeof fav === 'string' ? fav : fav.domain).toLowerCase().trim();
+      if (!domain) continue;
+      if (domain.startsWith('*.')) {
+        const base = domain.substring(2);
         if (hostNoWww === base || hostNoWww.endsWith('.' + base)) return true;
       } else {
-        const fNoWww = f.startsWith('www.') ? f.substring(4) : f;
+        const fNoWww = domain.startsWith('www.') ? domain.substring(4) : domain;
         if (hostNoWww === fNoWww || hostNoWww.endsWith('.' + fNoWww)) return true;
       }
     }
     return false;
+  }
+
+  // 查找匹配域名的收藏项（返回完整对象或 null）
+  function findFavoriteObj(hostname) {
+    if (!hostname) return null;
+    const host = hostname.toLowerCase();
+    const hostNoWww = host.startsWith('www.') ? host.substring(4) : host;
+    for (const fav of favoritesList) {
+      const domain = (typeof fav === 'string' ? fav : fav.domain).toLowerCase().trim();
+      if (!domain) continue;
+      if (domain.startsWith('*.')) {
+        const base = domain.substring(2);
+        if (hostNoWww === base || hostNoWww.endsWith('.' + base)) return fav;
+      } else {
+        const fNoWww = domain.startsWith('www.') ? domain.substring(4) : domain;
+        if (hostNoWww === fNoWww || hostNoWww.endsWith('.' + fNoWww)) return fav;
+      }
+    }
+    return null;
+  }
+
+  // 获取收藏项的域名字符串
+  function getFavDomain(fav) {
+    return typeof fav === 'string' ? fav : fav.domain;
+  }
+
+  // 隐藏收藏范围下拉菜单
+  function hideFavScopeDropdown() {
+    elements.favScopeDropdown.classList.remove('show');
   }
 
   // 更新当前 URL 显示和收藏按钮状态
@@ -384,6 +416,13 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.editBtn.addEventListener('click', handleEdit);
     elements.deleteBtn.addEventListener('click', handleDelete);
     elements.currentUrlFavBtn.addEventListener('click', handleFavorite);
+    elements.favScopeAll.addEventListener('click', () => addFavoriteWithScope('all'));
+    elements.favScopeCurrent.addEventListener('click', () => addFavoriteWithScope('specific'));
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.fav-wrapper')) {
+        hideFavScopeDropdown();
+      }
+    });
     elements.addProxyBtn.addEventListener('click', () => showProxyDialog());
     elements.settingsBtn.addEventListener('click', handleSettings);
     elements.helpBtn.addEventListener('click', handleHelp);
@@ -533,11 +572,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const wwwVariant = 'www.' + domainToRemove;
         const noWww = domainToRemove.startsWith('www.') ? domainToRemove.substring(4) : domainToRemove;
         const toRemove = favoritesList.filter(f => {
-          const fl = f.toLowerCase().trim();
-          return fl === domainToRemove || fl === wwwVariant || fl === noWww || fl === 'www.' + noWww;
+          const domain = (typeof f === 'string' ? f : f.domain).toLowerCase().trim();
+          return domain === domainToRemove || domain === wwwVariant || domain === noWww || domain === 'www.' + noWww;
         });
         if (toRemove.length > 0) {
-          chrome.runtime.sendMessage({ action: 'removeFavorite', domain: toRemove[0] }, () => {
+          const removeDomain = getFavDomain(toRemove[0]);
+          chrome.runtime.sendMessage({ action: 'removeFavorite', domain: removeDomain }, () => {
             favoritesList = favoritesList.filter(f => !toRemove.includes(f));
             updateCurrentUrlDisplay();
             updateStatusBar();
@@ -545,21 +585,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } else {
-      // 添加收藏
-      const confirmMessage = getMessage('favoriteConfirm');
-      if (confirm(confirmMessage)) {
-        chrome.runtime.sendMessage({ action: 'addFavorite', domain: currentTabHostname }, () => {
-          favoritesList.push(currentTabHostname);
-          updateCurrentUrlDisplay();
-          // 如果没有活跃代理，自动使用第一个代理
-          if (!activeProxyId && proxies.length > 0) {
-            const proxy = proxies[0];
-            enableProxy(proxy);
-          }
-          loadState();
-        });
+      // 添加收藏：显示范围选择下拉菜单
+      const dropdown = elements.favScopeDropdown;
+      if (dropdown.classList.contains('show')) {
+        hideFavScopeDropdown();
+      } else {
+        dropdown.classList.add('show');
       }
     }
+  }
+
+  // 执行收藏操作（由范围选择触发）
+  function addFavoriteWithScope(scope) {
+    if (!currentTabHostname) return;
+    hideFavScopeDropdown();
+
+    let proxyIds = [];
+    if (scope === 'specific' && activeProxyId) {
+      proxyIds = [activeProxyId];
+    }
+
+    chrome.runtime.sendMessage({
+      action: 'addFavorite',
+      domain: currentTabHostname,
+      scope: scope,
+      proxyIds: proxyIds
+    }, () => {
+      favoritesList.push({
+        domain: currentTabHostname,
+        scope: scope,
+        proxyIds: proxyIds
+      });
+      updateCurrentUrlDisplay();
+      if (!activeProxyId && proxies.length > 0) {
+        const proxy = proxies[0];
+        enableProxy(proxy);
+      }
+      loadState();
+    });
   }
 
   // 打开设置页面

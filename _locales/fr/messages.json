@@ -281,5 +281,12 @@
   "syncedSmartDomains": { "message": "Domaines de règles synchronisés automatiquement" },
   "syncedFavorites": { "message": "Domaines favoris synchronisés automatiquement" },
   "savePacScript": { "message": "Enregistrer le script PAC" },
-  "pacSaved": { "message": "Script PAC enregistré avec succès" }
+  "pacSaved": { "message": "Script PAC enregistré avec succès" },
+  "scopeAllProxies": { "message": "Tous les proxys", "description": "Portée des favoris : tous les proxys" },
+  "scopeCurrentProxy": { "message": "Proxy actuel uniquement", "description": "Portée des favoris : proxy actuel uniquement" },
+  "scopeSpecificProxies": { "message": "Proxys spécifiques", "description": "Portée des favoris : proxys spécifiques" },
+  "editFavoriteScope": { "message": "Modifier la portée du favori", "description": "Titre du modal de modification de la portée du favori" },
+  "editFavorite": { "message": "Modifier le favori", "description": "Info-bulle du bouton de modification du favori" },
+  "selectAtLeastOneProxy": { "message": "Veuillez sélectionner au moins un proxy", "description": "Message d'erreur lorsqu'aucun proxy n'est sélectionné" },
+  "favoriteScopeUpdated": { "message": "Portée du favori mise à jour", "description": "Message de succès de mise à jour de la portée du favori" }
 }

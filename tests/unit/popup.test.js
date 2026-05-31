@@ -101,6 +101,20 @@ function setupPopupDOM() {
   currentUrlFavImg.id = 'currentUrlFavImg';
   document.body.appendChild(currentUrlFavImg);
 
+  const favScopeDropdown = document.createElement('div');
+  favScopeDropdown.id = 'favScopeDropdown';
+  document.body.appendChild(favScopeDropdown);
+
+  const favScopeAll = document.createElement('button');
+  favScopeAll.id = 'favScopeAll';
+  favScopeAll.setAttribute('data-scope', 'all');
+  document.body.appendChild(favScopeAll);
+
+  const favScopeCurrent = document.createElement('button');
+  favScopeCurrent.id = 'favScopeCurrent';
+  favScopeCurrent.setAttribute('data-scope', 'specific');
+  document.body.appendChild(favScopeCurrent);
+
   const addProxyBtn = document.createElement('button');
   addProxyBtn.id = 'addProxyBtn';
   document.body.appendChild(addProxyBtn);

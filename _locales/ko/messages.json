@@ -281,5 +281,12 @@
   "syncedSmartDomains": { "message": "자동 동기화된 규칙 도메인" },
   "syncedFavorites": { "message": "자동 동기화된 즐겨찾기 도메인" },
   "savePacScript": { "message": "PAC 스크립트 저장" },
-  "pacSaved": { "message": "PAC 스크립트가 저장되었습니다" }
+  "pacSaved": { "message": "PAC 스크립트가 저장되었습니다" },
+  "scopeAllProxies": { "message": "모든 프록시", "description": "즐겨찾기 범위: 모든 프록시" },
+  "scopeCurrentProxy": { "message": "현재 프록시만", "description": "즐겨찾기 범위: 현재 프록시만" },
+  "scopeSpecificProxies": { "message": "특정 프록시", "description": "즐겨찾기 범위: 특정 프록시" },
+  "editFavoriteScope": { "message": "즐겨찾기 범위 편집", "description": "즐겨찾기 범위 편집 모달 제목" },
+  "editFavorite": { "message": "즐겨찾기 편집", "description": "즐겨찾기 편집 버튼 툴팁" },
+  "selectAtLeastOneProxy": { "message": "최소 하나의 프록시를 선택하세요", "description": "프록시 미선택 시 오류 메시지" },
+  "favoriteScopeUpdated": { "message": "즐겨찾기 범위가 업데이트되었습니다", "description": "즐겨찾기 범위 업데이트 성공 메시지" }
 }

@@ -174,7 +174,7 @@ describe('Proxy Workflow Integration', () => {
       messageHandler({ action: 'addFavorite', domain: 'example.com' }, {}, sendResponse);
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith(
-        { favorites: ['example.com'] },
+        { favorites: [{ domain: 'example.com', scope: 'all', proxyIds: [] }] },
         expect.any(Function)
       );
 
@@ -185,7 +185,7 @@ describe('Proxy Workflow Integration', () => {
 
     test('should remove favorites', () => {
       const sendResponse = jest.fn();
-      let storageData = { favorites: ['example.com', 'test.com'] };
+      let storageData = { favorites: [{ domain: 'example.com', scope: 'all', proxyIds: [] }, { domain: 'test.com', scope: 'all', proxyIds: [] }] };
 
       chrome.storage.local.get.mockImplementation((keys, callback) => {
         if (typeof keys === 'string') {
@@ -210,7 +210,7 @@ describe('Proxy Workflow Integration', () => {
       messageHandler({ action: 'removeFavorite', domain: 'example.com' }, {}, sendResponse);
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith(
-        { favorites: ['test.com'] },
+        { favorites: [{ domain: 'test.com', scope: 'all', proxyIds: [] }] },
         expect.any(Function)
       );
     });

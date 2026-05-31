@@ -27,9 +27,21 @@
 
     <div class="current-url-bar" id="currentUrlBar">
       <span class="current-url-text" id="currentUrlText" title="">--</span>
-      <button class="btn-icon fav-btn" id="currentUrlFavBtn" title="Favorite">
-        <img src="icons/collection.png" alt="Favorite" width="16" height="16" id="currentUrlFavImg">
-      </button>
+      <div class="fav-wrapper">
+        <button class="btn-icon fav-btn" id="currentUrlFavBtn" title="Favorite">
+          <img src="icons/collection.png" alt="Favorite" width="16" height="16" id="currentUrlFavImg">
+        </button>
+        <div class="fav-scope-dropdown" id="favScopeDropdown">
+          <button class="fav-scope-option" id="favScopeAll" data-scope="all">
+            <span class="fav-scope-icon">&#9733;</span>
+            <span data-i18n="scopeAllProxies">All Proxies</span>
+          </button>
+          <button class="fav-scope-option" id="favScopeCurrent" data-scope="specific">
+            <span class="fav-scope-icon">&#9679;</span>
+            <span data-i18n="scopeCurrentProxy">Current Proxy</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="proxy-section">

@@ -281,5 +281,12 @@
   "syncedSmartDomains": { "message": "自動同步的規則網域" },
   "syncedFavorites": { "message": "自動同步的收藏網域" },
   "savePacScript": { "message": "儲存 PAC 腳本" },
-  "pacSaved": { "message": "PAC 腳本儲存成功" }
+  "pacSaved": { "message": "PAC 腳本儲存成功" },
+  "scopeAllProxies": { "message": "所有代理", "description": "收藏範圍：所有代理" },
+  "scopeCurrentProxy": { "message": "僅當前代理", "description": "收藏範圍：僅當前代理" },
+  "scopeSpecificProxies": { "message": "特定代理", "description": "收藏範圍：特定代理" },
+  "editFavoriteScope": { "message": "編輯收藏範圍", "description": "編輯收藏範圍彈窗標題" },
+  "editFavorite": { "message": "編輯收藏", "description": "編輯收藏按鈕提示" },
+  "selectAtLeastOneProxy": { "message": "請至少選擇一個代理", "description": "未選擇代理時的錯誤提示" },
+  "favoriteScopeUpdated": { "message": "收藏範圍已更新", "description": "收藏範圍更新成功提示" }
 }

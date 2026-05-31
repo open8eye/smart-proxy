@@ -281,5 +281,12 @@
   "syncedSmartDomains": { "message": "自動同期されたルールドメイン" },
   "syncedFavorites": { "message": "自動同期されたお気に入りドメイン" },
   "savePacScript": { "message": "PAC スクリプトを保存" },
-  "pacSaved": { "message": "PAC スクリプトが保存されました" }
+  "pacSaved": { "message": "PAC スクリプトが保存されました" },
+  "scopeAllProxies": { "message": "すべてのプロキシ", "description": "お気に入り範囲：すべてのプロキシ" },
+  "scopeCurrentProxy": { "message": "現在のプロキシのみ", "description": "お気に入り範囲：現在のプロキシのみ" },
+  "scopeSpecificProxies": { "message": "特定のプロキシ", "description": "お気に入り範囲：特定のプロキシ" },
+  "editFavoriteScope": { "message": "お気に入り範囲を編集", "description": "お気に入り範囲編集モーダルタイトル" },
+  "editFavorite": { "message": "お気に入りを編集", "description": "お気に入り編集ボタンのツールチップ" },
+  "selectAtLeastOneProxy": { "message": "少なくとも1つのプロキシを選択してください", "description": "プロキシ未選択時のエラーメッセージ" },
+  "favoriteScopeUpdated": { "message": "お気に入り範囲が更新されました", "description": "お気に入り範囲更新成功メッセージ" }
 }

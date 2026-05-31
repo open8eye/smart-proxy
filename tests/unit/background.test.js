@@ -227,14 +227,14 @@ describe('background.js', () => {
       );
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith(
-        { favorites: ['example.com'] },
+        { favorites: [{ domain: 'example.com', scope: 'all', proxyIds: [] }] },
         expect.any(Function)
       );
     });
 
     test('should handle removeFavorite message', () => {
       chrome.storage.local.get.mockImplementation((keys, callback) => {
-        callback({ favorites: ['example.com', 'test.com'] });
+        callback({ favorites: [{ domain: 'example.com', scope: 'all', proxyIds: [] }, { domain: 'test.com', scope: 'all', proxyIds: [] }] });
       });
       const sendResponse = jest.fn();
 
@@ -245,14 +245,14 @@ describe('background.js', () => {
       );
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith(
-        { favorites: ['test.com'] },
+        { favorites: [{ domain: 'test.com', scope: 'all', proxyIds: [] }] },
         expect.any(Function)
       );
     });
 
     test('should handle isFavorite message', () => {
       chrome.storage.local.get.mockImplementation((keys, callback) => {
-        callback({ favorites: ['example.com'] });
+        callback({ favorites: [{ domain: 'example.com', scope: 'all', proxyIds: [] }] });
       });
       const sendResponse = jest.fn();
 

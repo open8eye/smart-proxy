@@ -134,6 +134,16 @@ function bindEvents() {
   document.getElementById('cancel-edit-btn').addEventListener('click', closeModal);
   document.getElementById('modal-close-btn').addEventListener('click', closeModal);
 
+  document.getElementById('save-fav-edit-btn').addEventListener('click', saveFavoriteScope);
+  document.getElementById('cancel-fav-edit-btn').addEventListener('click', closeFavModal);
+  document.getElementById('fav-modal-close-btn').addEventListener('click', closeFavModal);
+
+  document.getElementById('edit-fav-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeFavModal();
+    }
+  });
+
   // 点击弹窗外部关闭
   document.getElementById('edit-proxy-modal').addEventListener('click', function(e) {
     if (e.target === this) {
@@ -459,8 +469,9 @@ function deleteProxy(id) {
 
 // 加载收藏列表并渲染
 function loadFavorites() {
-  chrome.storage.local.get(['favorites'], function(result) {
+  chrome.storage.local.get(['favorites', 'proxies'], function(result) {
     var favorites = result.favorites || [];
+    var proxies = result.proxies || [];
     var container = document.getElementById('favorites-list');
     var noFavorites = document.getElementById('no-favorites');
 
@@ -475,15 +486,41 @@ function loadFavorites() {
     noFavorites.style.display = 'none';
     container.style.display = 'flex';
 
-    favorites.forEach(function(domain) {
+    favorites.forEach(function(fav) {
+      var domain = typeof fav === 'string' ? fav : fav.domain;
+      var scope = (typeof fav === 'object' && fav.scope) ? fav.scope : 'all';
+      var proxyIds = (typeof fav === 'object' && Array.isArray(fav.proxyIds)) ? fav.proxyIds : [];
+
+      var scopeLabel = '';
+      if (scope === 'all') {
+        scopeLabel = '<span class="fav-scope-badge fav-scope-all">' + escapeHtml(getMessage('scopeAllProxies')) + '</span>';
+      } else {
+        var proxyNames = proxyIds.map(function(pid) {
+          var p = proxies.find(function(pr) { return pr.id === pid; });
+          return p ? escapeHtml(p.name) : pid;
+        }).join(', ');
+        scopeLabel = '<span class="fav-scope-badge fav-scope-specific">' + escapeHtml(getMessage('scopeSpecificProxies')) + (proxyNames ? ': ' + proxyNames : '') + '</span>';
+      }
+
       var item = document.createElement('div');
       item.className = 'favorite-item';
       item.innerHTML =
-        '<span class="favorite-domain">' + escapeHtml(domain) + '</span>' +
-        '<button class="favorite-remove" data-domain="' + escapeHtml(domain) + '" title="' + getMessage('removeFavorite') + '">&times;</button>';
+        '<div class="favorite-info">' +
+          '<span class="favorite-domain">' + escapeHtml(domain) + '</span>' +
+          scopeLabel +
+        '</div>' +
+        '<div class="favorite-actions">' +
+          '<button class="favorite-edit" data-domain="' + escapeHtml(domain) + '" title="' + getMessage('editFavorite') + '">&#9998;</button>' +
+          '<button class="favorite-remove" data-domain="' + escapeHtml(domain) + '" title="' + getMessage('removeFavorite') + '">&times;</button>' +
+        '</div>';
       container.appendChild(item);
     });
 
+    container.querySelectorAll('.favorite-edit').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        editFavorite(this.getAttribute('data-domain'));
+      });
+    });
     container.querySelectorAll('.favorite-remove').forEach(function(btn) {
       btn.addEventListener('click', function() {
         removeFavorite(this.getAttribute('data-domain'));
@@ -497,13 +534,113 @@ function removeFavorite(domain) {
   if (!confirm(getMessage('confirmRemoveFavorite'))) return;
 
   chrome.storage.local.get(['favorites'], function(result) {
-    var favorites = (result.favorites || []).filter(function(f) { return f !== domain; });
+    var favorites = (result.favorites || []).filter(function(f) {
+      var d = typeof f === 'string' ? f : f.domain;
+      return d !== domain;
+    });
     chrome.storage.local.set({ favorites: favorites }, function() {
       loadFavorites();
-      // loadPacScript(); // PAC脚本功能已屏蔽
       showStatus(getMessage('favoriteRemoved'), 'success');
     });
   });
+}
+
+// 编辑收藏范围
+function editFavorite(domain) {
+  chrome.storage.local.get(['favorites', 'proxies'], function(result) {
+    var favorites = result.favorites || [];
+    var proxies = result.proxies || [];
+    var fav = null;
+    for (var i = 0; i < favorites.length; i++) {
+      var d = typeof favorites[i] === 'string' ? favorites[i] : favorites[i].domain;
+      if (d === domain) { fav = favorites[i]; break; }
+    }
+    if (!fav) return;
+
+    var scope = (typeof fav === 'object' && fav.scope) ? fav.scope : 'all';
+    var proxyIds = (typeof fav === 'object' && Array.isArray(fav.proxyIds)) ? fav.proxyIds : [];
+
+    document.getElementById('edit-fav-domain').value = domain;
+
+    var scopeAllRadio = document.getElementById('fav-scope-all');
+    var scopeSpecificRadio = document.getElementById('fav-scope-specific');
+    scopeAllRadio.checked = scope === 'all';
+    scopeSpecificRadio.checked = scope === 'specific';
+
+    var checkboxesContainer = document.getElementById('fav-proxy-checkboxes');
+    checkboxesContainer.innerHTML = '';
+
+    if (proxies.length === 0) {
+      checkboxesContainer.innerHTML = '<div class="empty-state">' + escapeHtml(getMessage('noProxies')) + '</div>';
+    } else {
+      proxies.forEach(function(proxy) {
+        var label = document.createElement('label');
+        label.className = 'checkbox-item';
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = proxy.id;
+        checkbox.checked = proxyIds.indexOf(proxy.id) !== -1;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + escapeHtml(proxy.name)));
+        checkboxesContainer.appendChild(label);
+      });
+    }
+
+    checkboxesContainer.style.display = scope === 'specific' ? 'flex' : 'none';
+
+    scopeAllRadio.onchange = function() {
+      checkboxesContainer.style.display = 'none';
+    };
+    scopeSpecificRadio.onchange = function() {
+      checkboxesContainer.style.display = 'flex';
+    };
+
+    openFavModal();
+  });
+}
+
+// 保存收藏范围编辑
+function saveFavoriteScope() {
+  var domain = document.getElementById('edit-fav-domain').value;
+  var scopeAllRadio = document.getElementById('fav-scope-all');
+  var scope = scopeAllRadio.checked ? 'all' : 'specific';
+  var proxyIds = [];
+
+  if (scope === 'specific') {
+    var checkboxes = document.querySelectorAll('#fav-proxy-checkboxes input[type="checkbox"]:checked');
+    checkboxes.forEach(function(cb) { proxyIds.push(cb.value); });
+    if (proxyIds.length === 0) {
+      showStatus(getMessage('selectAtLeastOneProxy'), 'error');
+      return;
+    }
+  }
+
+  chrome.storage.local.get(['favorites'], function(result) {
+    var favorites = (result.favorites || []).map(function(f) {
+      var d = typeof f === 'string' ? f : f.domain;
+      if (d === domain) {
+        return { domain: domain, scope: scope, proxyIds: proxyIds };
+      }
+      return typeof f === 'string' ? { domain: f, scope: 'all', proxyIds: [] } : f;
+    });
+    chrome.storage.local.set({ favorites: favorites }, function() {
+      closeFavModal();
+      loadFavorites();
+      showStatus(getMessage('favoriteScopeUpdated'), 'success');
+    });
+  });
+}
+
+// 打开编辑收藏弹窗
+function openFavModal() {
+  document.getElementById('edit-fav-modal').classList.add('active');
+}
+
+// 关闭编辑收藏弹窗
+function closeFavModal() {
+  document.getElementById('edit-fav-modal').classList.remove('active');
+  document.getElementById('edit-fav-domain').value = '';
+  document.getElementById('fav-proxy-checkboxes').innerHTML = '';
 }
 
 // ============================================================
