@@ -91,21 +91,6 @@ zip -r smart-proxy.zip . \
   -x "./dist/*"
 ```
 
-## 提交到 Chrome 网上应用店
-
-1. 注册 [Chrome网上应用店开发者账号](https://chrome.google.com/webstore/devconsole)（需支付 $5 USD）
-2. 登录 [Chrome开发者控制台](https://chrome.google.com/webstore/devconsole)
-3. 点击 "New Item" 上传打包好的 `.zip` 文件
-4. 填写扩展信息、截图、隐私政策等
-5. 提交审核（通常1-3个工作日）
-
-## 提交到 Firefox 附加组件商店
-
-1. 注册 [Firefox Add-ons 开发者账号](https://addons.mozilla.org/developers/)（免费）
-2. 点击 "Submit a New Add-on"
-3. 上传打包好的 Firefox `.zip` 文件
-4. 填写扩展信息后提交审核
-
 ## 项目结构
 
 ```
