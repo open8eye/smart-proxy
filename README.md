@@ -30,6 +30,8 @@
 
 ### Chrome
 
+> **注意**：由于暂时没有 Visa 卡，无法注册 Chrome 开发者账号，Chrome 版本目前只能通过手动加载已解压的扩展程序方式安装。
+
 1. 下载或克隆本项目
 2. 打开Chrome浏览器，进入扩展管理页面：`chrome://extensions/`
 3. 开启"开发者模式"
@@ -37,6 +39,8 @@
 5. 选择本项目的 `smart-proxy` 目录
 
 ### Firefox
+
+> **状态**：Firefox 插件商城版本已提交审核，正在等待 Mozilla 审核通过，请耐心等待。
 
 1. 下载或克隆本项目
 2. 运行 `./dev-firefox.sh` 切换为 Firefox manifest
