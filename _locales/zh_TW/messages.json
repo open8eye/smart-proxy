@@ -288,5 +288,11 @@
   "editFavoriteScope": { "message": "編輯收藏範圍", "description": "編輯收藏範圍彈窗標題" },
   "editFavorite": { "message": "編輯收藏", "description": "編輯收藏按鈕提示" },
   "selectAtLeastOneProxy": { "message": "請至少選擇一個代理", "description": "未選擇代理時的錯誤提示" },
-  "favoriteScopeUpdated": { "message": "收藏範圍已更新", "description": "收藏範圍更新成功提示" }
+  "favoriteScopeUpdated": { "message": "收藏範圍已更新", "description": "收藏範圍更新成功提示" },
+  "fileImportExportDesc": { "message": "透過檔案匯入或匯出全部設定（包括代理、設定、收藏和規則網域）" },
+  "exportConfigFile": { "message": "匯出設定檔" },
+  "importConfigFile": { "message": "匯入設定檔" },
+  "exportConfigSuccess": { "message": "設定已匯出為檔案" },
+  "importConfigSuccess": { "message": "設定已從檔案匯入" },
+  "importConfigFormatError": { "message": "設定檔格式無效，請確認檔案是由本擴充功能匯出的" }
 }

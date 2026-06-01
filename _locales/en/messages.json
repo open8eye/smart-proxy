@@ -329,5 +329,11 @@
   "editFavoriteScope": { "message": "Edit Favorite Scope", "description": "Edit favorite scope modal title" },
   "editFavorite": { "message": "Edit Favorite", "description": "Edit favorite button tooltip" },
   "selectAtLeastOneProxy": { "message": "Please select at least one proxy", "description": "Error when no proxy selected" },
-  "favoriteScopeUpdated": { "message": "Favorite scope updated", "description": "Favorite scope update success message" }
+  "favoriteScopeUpdated": { "message": "Favorite scope updated", "description": "Favorite scope update success message" },
+  "fileImportExportDesc": { "message": "Import or export all configuration via file (including proxies, settings, favorites and rule domains)" },
+  "exportConfigFile": { "message": "Export Config File" },
+  "importConfigFile": { "message": "Import Config File" },
+  "exportConfigSuccess": { "message": "Configuration exported as file" },
+  "importConfigSuccess": { "message": "Configuration imported from file" },
+  "importConfigFormatError": { "message": "Invalid config file format. Please ensure the file was exported by this extension." }
 }

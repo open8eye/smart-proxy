@@ -288,5 +288,11 @@
   "editFavoriteScope": { "message": "즐겨찾기 범위 편집", "description": "즐겨찾기 범위 편집 모달 제목" },
   "editFavorite": { "message": "즐겨찾기 편집", "description": "즐겨찾기 편집 버튼 툴팁" },
   "selectAtLeastOneProxy": { "message": "최소 하나의 프록시를 선택하세요", "description": "프록시 미선택 시 오류 메시지" },
-  "favoriteScopeUpdated": { "message": "즐겨찾기 범위가 업데이트되었습니다", "description": "즐겨찾기 범위 업데이트 성공 메시지" }
+  "favoriteScopeUpdated": { "message": "즐겨찾기 범위가 업데이트되었습니다", "description": "즐겨찾기 범위 업데이트 성공 메시지" },
+  "fileImportExportDesc": { "message": "파일로 모든 구성 가져오기 또는 내보내기 (프록시, 설정, 즐겨찾기, 규칙 도메인 포함)" },
+  "exportConfigFile": { "message": "구성 파일 내보내기" },
+  "importConfigFile": { "message": "구성 파일 가져오기" },
+  "exportConfigSuccess": { "message": "구성이 파일로 내보내졌습니다" },
+  "importConfigSuccess": { "message": "구성이 파일에서 가져와졌습니다" },
+  "importConfigFormatError": { "message": "구성 파일 형식이 올바르지 않습니다. 이 확장 프로그램에서 내보낸 파일인지 확인하세요." }
 }

@@ -288,5 +288,11 @@
   "editFavoriteScope": { "message": "Favoritenbereich bearbeiten", "description": "Modal-Titel für Favoritenbereich bearbeiten" },
   "editFavorite": { "message": "Favorit bearbeiten", "description": "Tooltip für Favorit-Bearbeitungsschaltfläche" },
   "selectAtLeastOneProxy": { "message": "Bitte wählen Sie mindestens einen Proxy aus", "description": "Fehlermeldung bei keiner Proxy-Auswahl" },
-  "favoriteScopeUpdated": { "message": "Favoritenbereich aktualisiert", "description": "Erfolgsmeldung bei Aktualisierung des Favoritenbereichs" }
+  "favoriteScopeUpdated": { "message": "Favoritenbereich aktualisiert", "description": "Erfolgsmeldung bei Aktualisierung des Favoritenbereichs" },
+  "fileImportExportDesc": { "message": "Alle Konfigurationen per Datei importieren oder exportieren (einschließlich Proxy, Einstellungen, Favoriten und Regel-Domains)" },
+  "exportConfigFile": { "message": "Konfiguration exportieren" },
+  "importConfigFile": { "message": "Konfiguration importieren" },
+  "exportConfigSuccess": { "message": "Konfiguration als Datei exportiert" },
+  "importConfigSuccess": { "message": "Konfiguration aus Datei importiert" },
+  "importConfigFormatError": { "message": "Ungültiges Konfigurationsdateiformat. Bitte stellen Sie sicher, dass die Datei von dieser Erweiterung exportiert wurde." }
 }

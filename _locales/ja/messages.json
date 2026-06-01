@@ -288,5 +288,11 @@
   "editFavoriteScope": { "message": "お気に入り範囲を編集", "description": "お気に入り範囲編集モーダルタイトル" },
   "editFavorite": { "message": "お気に入りを編集", "description": "お気に入り編集ボタンのツールチップ" },
   "selectAtLeastOneProxy": { "message": "少なくとも1つのプロキシを選択してください", "description": "プロキシ未選択時のエラーメッセージ" },
-  "favoriteScopeUpdated": { "message": "お気に入り範囲が更新されました", "description": "お気に入り範囲更新成功メッセージ" }
+  "favoriteScopeUpdated": { "message": "お気に入り範囲が更新されました", "description": "お気に入り範囲更新成功メッセージ" },
+  "fileImportExportDesc": { "message": "ファイルですべての設定をインポートまたはエクスポート（プロキシ、設定、お気に入り、ルールドメインを含む）" },
+  "exportConfigFile": { "message": "設定ファイルをエクスポート" },
+  "importConfigFile": { "message": "設定ファイルをインポート" },
+  "exportConfigSuccess": { "message": "設定がファイルにエクスポートされました" },
+  "importConfigSuccess": { "message": "設定がファイルからインポートされました" },
+  "importConfigFormatError": { "message": "設定ファイルの形式が無効です。この拡張機能でエクスポートされたファイルか確認してください。" }
 }

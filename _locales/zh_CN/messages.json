@@ -329,5 +329,11 @@
   "editFavoriteScope": { "message": "编辑收藏范围", "description": "编辑收藏范围弹窗标题" },
   "editFavorite": { "message": "编辑收藏", "description": "编辑收藏按钮提示" },
   "selectAtLeastOneProxy": { "message": "请至少选择一个代理", "description": "未选择代理时的错误提示" },
-  "favoriteScopeUpdated": { "message": "收藏范围已更新", "description": "收藏范围更新成功提示" }
+  "favoriteScopeUpdated": { "message": "收藏范围已更新", "description": "收藏范围更新成功提示" },
+  "fileImportExportDesc": { "message": "通过文件导入或导出全部配置（包括代理、设置、收藏和规则域名）" },
+  "exportConfigFile": { "message": "导出配置文件" },
+  "importConfigFile": { "message": "导入配置文件" },
+  "exportConfigSuccess": { "message": "配置已导出为文件" },
+  "importConfigSuccess": { "message": "配置已从文件导入" },
+  "importConfigFormatError": { "message": "配置文件格式无效，请确认文件是由本扩展导出的" }
 }

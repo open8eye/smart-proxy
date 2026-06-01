@@ -164,7 +164,23 @@
         <h2 data-i18n="importExport"></h2>
       </div>
       <div class="card-body">
-        <label for="import-export-data" class="field-label" data-i18n="importExportLabel"></label>
+        <p class="file-import-export-desc" data-i18n="fileImportExportDesc"></p>
+        <div class="file-import-export-actions">
+          <button id="export-config-btn" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <span data-i18n="exportConfigFile"></span>
+          </button>
+          <label class="btn btn-secondary" for="import-config-file">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
+            </svg>
+            <span data-i18n="importConfigFile"></span>
+          </label>
+          <input type="file" id="import-config-file" accept=".json" style="display:none">
+        </div>
+        <label for="import-export-data" class="field-label" data-i18n="importExportLabel" style="margin-top:16px"></label>
         <textarea id="import-export-data" rows="6" data-i18n-placeholder="importExportPlaceholder"></textarea>
         <div class="button-row">
           <button id="import-btn" class="btn btn-primary" data-i18n="importBtn" data-i18n-title="importBtn"></button>

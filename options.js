@@ -130,6 +130,8 @@ function bindEvents() {
   document.getElementById('reset-btn').addEventListener('click', resetOptions);
   document.getElementById('import-btn').addEventListener('click', importData);
   document.getElementById('export-btn').addEventListener('click', exportData);
+  document.getElementById('export-config-btn').addEventListener('click', exportConfigToFile);
+  document.getElementById('import-config-file').addEventListener('change', importConfigFromFile);
   document.getElementById('save-proxy-btn').addEventListener('click', saveProxy);
   document.getElementById('cancel-edit-btn').addEventListener('click', closeModal);
   document.getElementById('modal-close-btn').addEventListener('click', closeModal);
@@ -866,6 +868,83 @@ function exportData() {
     textarea.value = JSON.stringify(proxies, null, 2);
     showStatus(getMessage('exportSuccess'), 'success');
   });
+}
+
+// 导出全部配置到 JSON 文件
+function exportConfigToFile() {
+  chrome.storage.local.get(['options', 'proxies', 'favorites', 'smartDomains', 'proxyMode'], function(result) {
+    var config = {
+      version: 1,
+      exportTime: new Date().toISOString(),
+      options: result.options || {},
+      proxies: result.proxies || [],
+      favorites: result.favorites || [],
+      smartDomains: result.smartDomains || [],
+      proxyMode: result.proxyMode || 'page'
+    };
+
+    var json = JSON.stringify(config, null, 2);
+    var blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var now = new Date();
+    var ts = now.getFullYear() +
+      String(now.getMonth() + 1).padStart(2, '0') +
+      String(now.getDate()).padStart(2, '0') + '_' +
+      String(now.getHours()).padStart(2, '0') +
+      String(now.getMinutes()).padStart(2, '0');
+    a.href = url;
+    a.download = 'smart-proxy-config-' + ts + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus(getMessage('exportConfigSuccess'), 'success');
+  });
+}
+
+// 从 JSON 文件导入全部配置
+function importConfigFromFile(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      var config = JSON.parse(evt.target.result);
+
+      if (!config.version || !config.proxies) {
+        showStatus(getMessage('importConfigFormatError'), 'error');
+        return;
+      }
+
+      var valid = config.proxies.every(function(item) {
+        return item.name && item.type && item.host && item.port;
+      });
+
+      if (!valid) {
+        showStatus(getMessage('importConfigFormatError'), 'error');
+        return;
+      }
+
+      var dataToSet = {};
+      if (config.options) dataToSet.options = config.options;
+      if (config.proxies) dataToSet.proxies = config.proxies;
+      if (config.favorites) dataToSet.favorites = config.favorites;
+      if (config.smartDomains) dataToSet.smartDomains = config.smartDomains;
+      if (config.proxyMode) dataToSet.proxyMode = config.proxyMode;
+
+      chrome.storage.local.set(dataToSet, function() {
+        loadOptions();
+        loadProxies();
+        loadFavorites();
+        loadSmartDomains();
+        showStatus(getMessage('importConfigSuccess'), 'success');
+      });
+    } catch (err) {
+      showStatus(getMessage('importConfigFormatError'), 'error');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
 }
 
 // ============================================================

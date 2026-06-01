@@ -156,6 +156,32 @@ textarea {
   min-height: 200px;
 }
 
+.file-import-export-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.file-import-export-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.file-import-export-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.file-import-export-actions .btn svg {
+  flex-shrink: 0;
+}
+
+.file-import-export-actions label.btn {
+  cursor: pointer;
+}
+
 select {
   cursor: pointer;
   appearance: none;

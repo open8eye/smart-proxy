@@ -288,5 +288,11 @@
   "editFavoriteScope": { "message": "Modifier la portée du favori", "description": "Titre du modal de modification de la portée du favori" },
   "editFavorite": { "message": "Modifier le favori", "description": "Info-bulle du bouton de modification du favori" },
   "selectAtLeastOneProxy": { "message": "Veuillez sélectionner au moins un proxy", "description": "Message d'erreur lorsqu'aucun proxy n'est sélectionné" },
-  "favoriteScopeUpdated": { "message": "Portée du favori mise à jour", "description": "Message de succès de mise à jour de la portée du favori" }
+  "favoriteScopeUpdated": { "message": "Portée du favori mise à jour", "description": "Message de succès de mise à jour de la portée du favori" },
+  "fileImportExportDesc": { "message": "Importer ou exporter toute la configuration via un fichier (y compris les proxys, paramètres, favoris et domaines de règles)" },
+  "exportConfigFile": { "message": "Exporter le fichier de config" },
+  "importConfigFile": { "message": "Importer le fichier de config" },
+  "exportConfigSuccess": { "message": "Configuration exportée en fichier" },
+  "importConfigSuccess": { "message": "Configuration importée depuis le fichier" },
+  "importConfigFormatError": { "message": "Format de fichier de configuration invalide. Veuillez vérifier que le fichier a été exporté par cette extension." }
 }
