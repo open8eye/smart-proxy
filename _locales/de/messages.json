@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "Konfiguration importieren" },
   "exportConfigSuccess": { "message": "Konfiguration als Datei exportiert" },
   "importConfigSuccess": { "message": "Konfiguration aus Datei importiert" },
-  "importConfigFormatError": { "message": "Ungültiges Konfigurationsdateiformat. Bitte stellen Sie sicher, dass die Datei von dieser Erweiterung exportiert wurde." }
+  "importConfigFormatError": { "message": "Ungültiges Konfigurationsdateiformat. Bitte stellen Sie sicher, dass die Datei von dieser Erweiterung exportiert wurde." },
+  "iconAnimation": { "message": "Symbol-Animation aktivieren (Rotation bei Verbindung)" }
 }

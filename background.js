@@ -265,6 +265,7 @@ function initializeExtension() {
           startupRestore: true,   // 启动时恢复代理
           quickSwitch: false,     // 快捷键切换
           cascadeProxy: true,     // 级联代理（新标签页继承代理）
+          iconAnimation: true,    // 图标动画（默认开启）
           bypassList: ['localhost', '127.0.0.1', '::1'],
           language: getDefaultLanguage()
         }
@@ -418,9 +419,10 @@ function generateIconFrame(size, status, frame) {
 
     // 状态颜色配置
     var colors = {
-      on:      { arc: 'rgba(76, 175, 80, 0.9)',  ring: 'rgba(76, 175, 80, 0.3)' },   // 绿色
-      standby: { arc: 'rgba(245, 158, 11, 0.9)', ring: 'rgba(245, 158, 11, 0.3)' },  // 黄色
-      off:     { arc: 'rgba(244, 67, 54, 0.9)',  ring: 'rgba(244, 67, 54, 0.4)' }    // 红色
+      on:        { arc: 'rgba(76, 175, 80, 0.9)',  ring: 'rgba(76, 175, 80, 0.3)' },   // 绿色
+      'on-static': { arc: 'rgba(76, 175, 80, 0.9)',  ring: 'rgba(76, 175, 80, 0.3)' },   // 绿色静态
+      standby:   { arc: 'rgba(245, 158, 11, 0.9)', ring: 'rgba(245, 158, 11, 0.3)' },  // 黄色
+      off:       { arc: 'rgba(244, 67, 54, 0.9)',  ring: 'rgba(244, 67, 54, 0.4)' }    // 红色
     };
     var c = colors[status] || colors.off;
 
@@ -433,7 +435,7 @@ function generateIconFrame(size, status, frame) {
     ctx.restore();
 
     if (status === 'on' || status === 'standby') {
-      // 已连接/待机状态：绘制旋转弧线 + 外环
+      // 已连接/待机状态（动画）：绘制旋转弧线 + 外环
       var startAngle = (frame / totalFrames) * Math.PI * 2 - Math.PI / 2;
       var endAngle = startAngle + Math.PI * 1.5;
 
@@ -448,6 +450,19 @@ function generateIconFrame(size, status, frame) {
       ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2);
       ctx.strokeStyle = c.ring;
       ctx.lineWidth = lineWidth;
+      ctx.stroke();
+    } else if (status === 'on-static') {
+      // 已连接（静态）：绘制完整绿色圆圈
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = c.arc;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, outerRadius - lineWidth * 0.5, 0, Math.PI * 2);
+      ctx.strokeStyle = c.ring;
+      ctx.lineWidth = lineWidth * 0.3;
       ctx.stroke();
     } else {
       // 断开状态：绘制静态双环
@@ -511,15 +526,21 @@ function startIconAnimation(status) {
 
   iconFrameIndex = 0;
 
-  if (status === 'on' || status === 'standby') {
-    iconAnimationTimer = setInterval(function() {
-      iconFrameIndex = (iconFrameIndex + 1) % totalFrames;
+  // 读取动画设置
+  chrome.storage.local.get(['options'], function(result) {
+    var options = result.options || {};
+    var animEnabled = options.iconAnimation !== false;
+
+    if (animEnabled && (status === 'on' || status === 'standby')) {
+      iconAnimationTimer = setInterval(function() {
+        iconFrameIndex = (iconFrameIndex + 1) % totalFrames;
+        updateIconFrame(status);
+      }, 100);
       updateIconFrame(status);
-    }, 100);
-    updateIconFrame(status);
-  } else {
-    updateIconFrame('off');
-  }
+    } else {
+      updateIconFrame(status === 'on' || status === 'standby' ? 'on-static' : 'off');
+    }
+  });
 }
 
 // 停止图标动画

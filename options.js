@@ -259,6 +259,7 @@ function loadOptions() {
     document.getElementById('quick-switch').checked = options.quickSwitch || false;
     document.getElementById('cascade-proxy').checked = options.cascadeProxy !== false;  // 默认开启
     document.getElementById('favorite-quick-proxy').checked = options.favoriteQuickProxy !== false;  // 默认开启
+    document.getElementById('icon-animation').checked = options.iconAnimation !== false;  // 默认开启
 
     var bypassList = options.bypassList || [];
     document.getElementById('bypass-list').value = bypassList.join('\n');
@@ -276,6 +277,7 @@ function saveOptions() {
   var quickSwitch = document.getElementById('quick-switch').checked;
   var cascadeProxy = document.getElementById('cascade-proxy').checked;
   var favoriteQuickProxy = document.getElementById('favorite-quick-proxy').checked;
+  var iconAnimation = document.getElementById('icon-animation').checked;
   var bypassText = document.getElementById('bypass-list').value.trim();
   var bypassList = bypassText ? bypassText.split('\n').map(function(line) { return line.trim(); }).filter(function(line) { return line.length > 0; }) : [];
   var language = document.getElementById('language-select').value;
@@ -288,6 +290,7 @@ function saveOptions() {
     options.quickSwitch = quickSwitch;
     options.cascadeProxy = cascadeProxy;
     options.favoriteQuickProxy = favoriteQuickProxy;
+    options.iconAnimation = iconAnimation;
     options.bypassList = bypassList;
     options.language = language;
 

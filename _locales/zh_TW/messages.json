@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "匯入設定檔" },
   "exportConfigSuccess": { "message": "設定已匯出為檔案" },
   "importConfigSuccess": { "message": "設定已從檔案匯入" },
-  "importConfigFormatError": { "message": "設定檔格式無效，請確認檔案是由本擴充功能匯出的" }
+  "importConfigFormatError": { "message": "設定檔格式無效，請確認檔案是由本擴充功能匯出的" },
+  "iconAnimation": { "message": "啟用圖示動畫（連線時旋轉）" }
 }

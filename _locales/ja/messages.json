@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "設定ファイルをインポート" },
   "exportConfigSuccess": { "message": "設定がファイルにエクスポートされました" },
   "importConfigSuccess": { "message": "設定がファイルからインポートされました" },
-  "importConfigFormatError": { "message": "設定ファイルの形式が無効です。この拡張機能でエクスポートされたファイルか確認してください。" }
+  "importConfigFormatError": { "message": "設定ファイルの形式が無効です。この拡張機能でエクスポートされたファイルか確認してください。" },
+  "iconAnimation": { "message": "アイコンアニメーションを有効にする（接続時に回転）" }
 }

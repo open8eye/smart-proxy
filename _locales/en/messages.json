@@ -335,5 +335,6 @@
   "importConfigFile": { "message": "Import Config File" },
   "exportConfigSuccess": { "message": "Configuration exported as file" },
   "importConfigSuccess": { "message": "Configuration imported from file" },
-  "importConfigFormatError": { "message": "Invalid config file format. Please ensure the file was exported by this extension." }
+  "importConfigFormatError": { "message": "Invalid config file format. Please ensure the file was exported by this extension." },
+  "iconAnimation": { "message": "Enable icon animation (rotate when connected)" }
 }

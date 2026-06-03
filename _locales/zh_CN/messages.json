@@ -335,5 +335,6 @@
   "importConfigFile": { "message": "导入配置文件" },
   "exportConfigSuccess": { "message": "配置已导出为文件" },
   "importConfigSuccess": { "message": "配置已从文件导入" },
-  "importConfigFormatError": { "message": "配置文件格式无效，请确认文件是由本扩展导出的" }
+  "importConfigFormatError": { "message": "配置文件格式无效，请确认文件是由本扩展导出的" },
+  "iconAnimation": { "message": "启用图标动画（连接时旋转）" }
 }

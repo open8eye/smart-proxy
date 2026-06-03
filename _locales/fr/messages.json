@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "Importer le fichier de config" },
   "exportConfigSuccess": { "message": "Configuration exportée en fichier" },
   "importConfigSuccess": { "message": "Configuration importée depuis le fichier" },
-  "importConfigFormatError": { "message": "Format de fichier de configuration invalide. Veuillez vérifier que le fichier a été exporté par cette extension." }
+  "importConfigFormatError": { "message": "Format de fichier de configuration invalide. Veuillez vérifier que le fichier a été exporté par cette extension." },
+  "iconAnimation": { "message": "Activer l'animation de l'icône (rotation lors de la connexion)" }
 }

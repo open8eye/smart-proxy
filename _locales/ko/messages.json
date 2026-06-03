@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "구성 파일 가져오기" },
   "exportConfigSuccess": { "message": "구성이 파일로 내보내졌습니다" },
   "importConfigSuccess": { "message": "구성이 파일에서 가져와졌습니다" },
-  "importConfigFormatError": { "message": "구성 파일 형식이 올바르지 않습니다. 이 확장 프로그램에서 내보낸 파일인지 확인하세요." }
+  "importConfigFormatError": { "message": "구성 파일 형식이 올바르지 않습니다. 이 확장 프로그램에서 내보낸 파일인지 확인하세요." },
+  "iconAnimation": { "message": "아이콘 애니메이션 활성화 (연결 시 회전)" }
 }

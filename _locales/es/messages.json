@@ -294,5 +294,6 @@
   "importConfigFile": { "message": "Importar archivo de config" },
   "exportConfigSuccess": { "message": "Configuración exportada como archivo" },
   "importConfigSuccess": { "message": "Configuración importada desde archivo" },
-  "importConfigFormatError": { "message": "Formato de archivo de configuración no válido. Asegúrese de que el archivo fue exportado por esta extensión." }
+  "importConfigFormatError": { "message": "Formato de archivo de configuración no válido. Asegúrese de que el archivo fue exportado por esta extensión." },
+  "iconAnimation": { "message": "Activar animación del icono (rotar al conectar)" }
 }
