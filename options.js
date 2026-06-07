@@ -257,9 +257,9 @@ function loadOptions() {
     var options = result.options || {};
     document.getElementById('startup-restore').checked = options.startupRestore || false;
     document.getElementById('quick-switch').checked = options.quickSwitch || false;
-    document.getElementById('cascade-proxy').checked = options.cascadeProxy !== false;  // 默认开启
+    document.getElementById('cascade-proxy').checked = options.cascadeProxy === true;  // 默认关闭
     document.getElementById('favorite-quick-proxy').checked = options.favoriteQuickProxy !== false;  // 默认开启
-    document.getElementById('icon-animation').checked = options.iconAnimation !== false;  // 默认开启
+    document.getElementById('icon-animation').checked = options.iconAnimation === true;  // 默认关闭
 
     var bypassList = options.bypassList || [];
     document.getElementById('bypass-list').value = bypassList.join('\n');

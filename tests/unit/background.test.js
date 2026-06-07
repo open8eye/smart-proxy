@@ -27,8 +27,8 @@ describe('background.js', () => {
         options: {
           startupRestore: true,
           quickSwitch: false,
-          cascadeProxy: true,
-          iconAnimation: true,
+          cascadeProxy: false,
+          iconAnimation: false,
           bypassList: ['localhost', '127.0.0.1', '::1'],
           language: 'en'
         }

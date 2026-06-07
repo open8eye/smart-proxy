@@ -291,8 +291,8 @@ function initializeExtension() {
         options: {
           startupRestore: true,   // 启动时恢复代理
           quickSwitch: false,     // 快捷键切换
-          cascadeProxy: true,     // 级联代理（新标签页继承代理）
-          iconAnimation: true,    // 图标动画（默认开启）
+          cascadeProxy: false,    // 级联代理（新标签页继承代理）
+          iconAnimation: false,   // 图标动画
           bypassList: ['localhost', '127.0.0.1', '::1'],
           language: getDefaultLanguage()
         }
@@ -571,7 +571,7 @@ function startIconAnimation(status, tabId) {
   // 读取动画设置
   chrome.storage.local.get(['options'], function(result) {
     var options = result.options || {};
-    var animEnabled = options.iconAnimation !== false;
+    var animEnabled = options.iconAnimation === true;
 
     if (animEnabled && (status === 'on' || status === 'standby')) {
       iconAnimationTimer = setInterval(function() {
@@ -646,14 +646,9 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
           setProxyConfig(proxy);
           chrome.storage.local.set({ activeProxyId: windowProxyId });
           startIconAnimation('on', tabId);
-        } else {
-          setDirectConnection();
-          startIconAnimation('off', tabId);
         }
-      } else {
-        setDirectConnection();
-        startIconAnimation('off', tabId);
       }
+      // 窗口无代理时不设置直连，让 checkAllTabs 处理收藏/智能域名匹配
     }
     checkAllTabs();
   });
@@ -1251,9 +1246,7 @@ function checkAllTabs() {
 
         // 如果标签页已有代理设置，检查是否是活动标签页
         if (tabProxies[tabId]) {
-          // 窗口级别检查：只有窗口已开启代理时才应用标签页代理
-          var tabWindowHasProxy = focusedWindowId != null && !!windowProxies[focusedWindowId];
-          if (tab.active && tabWindowHasProxy) {
+          if (tab.active) {
             hasActiveProxy = true;
             // 确保代理配置正确应用
             var proxy = proxies.find(function(p) { return p.id === tabProxies[tabId]; });
@@ -1286,13 +1279,6 @@ function checkAllTabs() {
           console.log('[定时检测] 标签页=' + tabId, '主机名=' + hostname, '收藏=' + inFav, '规则=' + inSmart);
 
           if (!inFav && !inSmart) continue;  // 不匹配任何列表，跳过
-
-          // 收藏/智能域名匹配：只有窗口已开启代理时才自动应用
-          var windowHasProxy = focusedWindowId != null && !!windowProxies[focusedWindowId];
-          if (!windowHasProxy) {
-            console.log('[定时检测] 标签页=' + tabId, '域名匹配但窗口未开启代理，跳过');
-            continue;
-          }
 
           // 获取要使用的代理服务器
           var proxyId = windowProxies[focusedWindowId] || activeProxyId;
