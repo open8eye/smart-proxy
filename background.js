@@ -8,6 +8,7 @@ var IS_FIREFOX = typeof browser !== 'undefined' && typeof browser.proxy !== 'und
 var firefoxProxyInfo = null;
 var firefoxPendingUrls = {};    // {tabId: url} Firefox pending URL 存储
 var firefoxRedirectedTabs = {}; // {tabId: true} 防止重定向死循环
+var firefoxFocusedWindowId = null; // Firefox 当前聚焦窗口 ID（用于 proxy.onRequest 按窗口路由）
 
 // 安全获取 WINDOW_ID_NONE（兼容 Chrome 和 Firefox）
 var WINDOW_ID_NONE = (typeof chrome !== 'undefined' && chrome.windows && chrome.windows.WINDOW_ID_NONE !== undefined) ? chrome.windows.WINDOW_ID_NONE : -1;
@@ -241,6 +242,16 @@ function setupFirefoxProxy() {
   if (!IS_FIREFOX) return;
   browser.proxy.onRequest.addListener(
     function(requestInfo) {
+      // 按窗口路由：检查请求所属窗口是否开启了代理
+      var windowId = requestInfo.windowId;
+      if (windowId != null && windowId >= 0) {
+        var proxyId = windowProxies[windowId];
+        if (proxyId && firefoxProxyInfo) {
+          return firefoxProxyInfo;
+        }
+        return { type: 'direct' };
+      }
+      // 无窗口信息时回退到全局状态
       if (firefoxProxyInfo) {
         return firefoxProxyInfo;
       }
@@ -434,10 +445,15 @@ function safeTabUpdate(tabId, props) {
 }
 
 // 设置扩展图标（兼容 Chrome action 和 Firefox browserAction）
-// details 可包含 tabId 以设置每标签页独立图标
+// Chrome: 支持 per-tab 图标（传入 tabId）
+// Firefox: browserAction.setIcon 对 tabId 支持不可靠，回退到全局图标
 function setExtensionIcon(details) {
   if (IS_FIREFOX) {
-    browser.browserAction.setIcon(details);
+    // Firefox 不传 tabId，设置全局图标
+    var ffDetails = {};
+    if (details.imageData) ffDetails.imageData = details.imageData;
+    if (details.path) ffDetails.path = details.path;
+    browser.browserAction.setIcon(ffDetails);
   } else {
     chrome.action.setIcon(details);
   }
@@ -647,6 +663,9 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
           chrome.storage.local.set({ activeProxyId: windowProxyId });
           startIconAnimation('on', tabId);
         }
+      } else if (IS_FIREFOX) {
+        // Firefox: 窗口无代理时直接设置图标为 off（checkAllTabs 不会更新 Firefox 图标）
+        startIconAnimation('off', tabId);
       }
       // 窗口无代理时不设置直连，让 checkAllTabs 处理收藏/智能域名匹配
     }
@@ -823,6 +842,7 @@ chrome.windows.onRemoved.addListener(function(windowId) {
 
 chrome.windows.onFocusChanged.addListener(function(windowId) {
   if (windowId === WINDOW_ID_NONE) return;
+  if (IS_FIREFOX) firefoxFocusedWindowId = windowId;
   console.log('[窗口切换] 窗口ID=' + windowId, '窗口代理映射=', JSON.stringify(windowProxies));
 
   chrome.storage.local.get(['proxyMode', 'proxies'], function(result) {
@@ -1254,7 +1274,10 @@ function checkAllTabs() {
               console.log('[定时检测] 活动标签页有代理，应用代理: ' + proxy.name);
               setProxyConfig(proxy);
               chrome.storage.local.set({ activeProxyId: tabProxies[tabId] });
-              startIconAnimation('on', tabId);
+              // Firefox: 图标由 windows.onFocusChanged 统一管理
+              if (!IS_FIREFOX) {
+                startIconAnimation('on', tabId);
+              }
 
               // pending状态下重定向到代理（防循环：检查是否已重定向）
               if (isPending && !firefoxRedirectedTabs[tabId]) {
@@ -1339,7 +1362,10 @@ function checkAllTabs() {
             hasActiveProxy = true;
             setProxyConfig(proxy);
             chrome.storage.local.set({ activeProxyId: proxyId, tabProxies: tabProxies });
-            startIconAnimation('on', tabId);
+            // Firefox: 图标由 windows.onFocusChanged 统一管理，避免窗口切换竞态
+            if (!IS_FIREFOX) {
+              startIconAnimation('on', tabId);
+            }
 
             if (isPending) {
               // pending状态下，使用tabs.update重定向到同一URL，取消当前pending请求（防循环）
@@ -1371,7 +1397,10 @@ function checkAllTabs() {
             console.log('[定时检测] 窗口有代理但无活动标签页代理，使用窗口代理: ' + wp.name);
             setProxyConfig(wp);
             chrome.storage.local.set({ activeProxyId: windowProxyId });
-            refreshCurrentTabIcon('on');
+            // Firefox: 只在仍聚焦同一窗口时更新图标（防止窗口切换竞态）
+            if (!IS_FIREFOX) {
+              refreshCurrentTabIcon('on');
+            }
             return;
           }
         }
@@ -1381,7 +1410,11 @@ function checkAllTabs() {
       if (!hasActiveProxy) {
         console.log('[定时检测] 活动标签页无代理，设置直连模式');
         setDirectConnection();
-        refreshCurrentTabIcon('off');
+        // Firefox: 只在仍聚焦同一窗口时更新图标（防止窗口切换竞态）
+        // Firefox 的图标由 windows.onFocusChanged 统一管理
+        if (!IS_FIREFOX) {
+          refreshCurrentTabIcon('off');
+        }
       } else {
         console.log('[定时检测] 活动标签页有代理，保持代理状态');
       }
@@ -1440,6 +1473,7 @@ if (typeof module !== 'undefined' && module.exports) {
     saveWindowProxies: saveWindowProxies,
     windowProxies: windowProxies,
     refreshCurrentTabIcon: refreshCurrentTabIcon,
-    currentIconTabId: currentIconTabId
+    currentIconTabId: currentIconTabId,
+    firefoxFocusedWindowId: firefoxFocusedWindowId
   };
 }
