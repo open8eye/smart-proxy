@@ -9,6 +9,9 @@ var firefoxProxyInfo = null;
 var firefoxPendingUrls = {};    // {tabId: url} Firefox pending URL 存储
 var firefoxRedirectedTabs = {}; // {tabId: true} 防止重定向死循环
 
+// 安全获取 WINDOW_ID_NONE（兼容 Chrome 和 Firefox）
+var WINDOW_ID_NONE = (typeof chrome !== 'undefined' && chrome.windows && chrome.windows.WINDOW_ID_NONE !== undefined) ? chrome.windows.WINDOW_ID_NONE : -1;
+
 // --- 窗口代理状态 ---
 var windowProxies = {};  // { windowId: proxyId } 窗口级别代理记录
 
@@ -824,7 +827,7 @@ chrome.windows.onRemoved.addListener(function(windowId) {
 });
 
 chrome.windows.onFocusChanged.addListener(function(windowId) {
-  if (windowId === chrome.windows.WINDOW_ID_NONE) return;
+  if (windowId === WINDOW_ID_NONE) return;
   console.log('[窗口切换] 窗口ID=' + windowId, '窗口代理映射=', JSON.stringify(windowProxies));
 
   chrome.storage.local.get(['proxyMode', 'proxies'], function(result) {
