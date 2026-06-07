@@ -21,12 +21,14 @@ describe('background.js', () => {
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith({ proxies: [] });
       expect(chrome.storage.local.set).toHaveBeenCalledWith({ tabProxies: {} });
+      expect(chrome.storage.local.set).toHaveBeenCalledWith({ windowProxies: {} });
       expect(chrome.storage.local.set).toHaveBeenCalledWith({ favorites: [] });
       expect(chrome.storage.local.set).toHaveBeenCalledWith({
         options: {
           startupRestore: true,
           quickSwitch: false,
           cascadeProxy: true,
+          iconAnimation: true,
           bypassList: ['localhost', '127.0.0.1', '::1'],
           language: 'en'
         }
@@ -67,7 +69,7 @@ describe('background.js', () => {
       background.initializeExtension();
 
       expect(chrome.storage.local.get).toHaveBeenCalledWith(
-        ['proxies', 'activeProxyId', 'tabProxies', 'favorites', 'options', 'proxyMode', 'smartDomains'],
+        ['proxies', 'activeProxyId', 'tabProxies', 'favorites', 'options', 'proxyMode', 'smartDomains', 'windowProxies'],
         expect.any(Function)
       );
     });

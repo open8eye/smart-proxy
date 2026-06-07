@@ -166,11 +166,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // URL 解析完成后：判断代理状态并更新 UI
-  function afterUrlResolved(tabId, storageResult) {
-    chrome.storage.local.get(['tabProxies'], tabResult => {
+  function afterUrlResolved(tabId, storageResult, windowId) {
+    chrome.storage.local.get(['tabProxies', 'windowProxies'], tabResult => {
       const tabProxies = tabResult.tabProxies || {};
+      const windowProxiesData = tabResult.windowProxies || {};
+      const windowProxyId = windowId != null ? windowProxiesData[windowId] : null;
+
       if (tabProxies[tabId]) {
         activeProxyId = tabProxies[tabId];
+        tabExplicitlyProxied = true;
+      } else if (windowProxyId) {
+        // 窗口级别有代理设置
+        activeProxyId = windowProxyId;
         tabExplicitlyProxied = true;
       } else {
         activeProxyId = storageResult.activeProxyId || null;
@@ -219,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 优先使用缓存的 URL（loading 状态下更准确）
                 const bestUrl = (tab.status === 'loading' && firefoxUrl) ? firefoxUrl : (tabUrl || firefoxUrl);
                 resolveUrl(bestUrl);
-                afterUrlResolved(tabId, result);
+                afterUrlResolved(tabId, result, tab.windowId);
               });
             } else {
               resolveUrl(tabUrl);
-              afterUrlResolved(tabId, result);
+              afterUrlResolved(tabId, result, tab.windowId);
             }
           } else {
             activeProxyId = result.activeProxyId || null;
@@ -487,20 +494,22 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs.length > 0) {
         const tabId = tabs[0].id;
+        const windowId = tabs[0].windowId;
         chrome.storage.local.get(['tabProxies'], (result) => {
           const tabProxies = result.tabProxies || {};
           tabProxies[tabId] = proxy.id;
           chrome.storage.local.set({ tabProxies });
         });
-      }
-    });
-    chrome.runtime.sendMessage({
-      action: 'setProxy',
-      proxy
-    }, response => {
-      if (response && response.success) {
-        activeProxyId = proxy.id;
-        updateStatusBar();
+        chrome.runtime.sendMessage({
+          action: 'setProxy',
+          proxy: proxy,
+          windowId: windowId
+        }, response => {
+          if (response && response.success) {
+            activeProxyId = proxy.id;
+            updateStatusBar();
+          }
+        });
       }
     });
   }
@@ -510,19 +519,21 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs.length > 0) {
         const tabId = tabs[0].id;
+        const windowId = tabs[0].windowId;
         chrome.storage.local.get(['tabProxies'], (result) => {
           const tabProxies = result.tabProxies || {};
           delete tabProxies[tabId];
           chrome.storage.local.set({ tabProxies });
         });
-      }
-    });
-    chrome.runtime.sendMessage({
-      action: 'disableProxy'
-    }, response => {
-      if (response && response.success) {
-        activeProxyId = null;
-        updateStatusBar();
+        chrome.runtime.sendMessage({
+          action: 'disableProxy',
+          windowId: windowId
+        }, response => {
+          if (response && response.success) {
+            activeProxyId = null;
+            updateStatusBar();
+          }
+        });
       }
     });
   }

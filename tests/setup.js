@@ -39,6 +39,15 @@ if (!chrome.tabs) {
     create: jest.fn()
   };
 }
+if (!chrome.windows) {
+  chrome.windows = {
+    onFocusChanged: { addListener: jest.fn() },
+    onRemoved: { addListener: jest.fn() },
+    WINDOW_ID_NONE: -1,
+    get: jest.fn(),
+    getCurrent: jest.fn()
+  };
+}
 
 global.alert = jest.fn();
 global.confirm = jest.fn(() => true);
